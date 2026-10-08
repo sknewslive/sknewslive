@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Login - SK News Live</title>
+
+<link
+href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap"
+rel="stylesheet">
+
+<style>
+
+:root{
+--p:#c8102e;
+--blue:#1877f2
+}
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:'Hind Siliguri',Arial,sans-serif
+}
+
+html,body{
+height:100%
+}
+
+body{
+background:#f5f5f5;
+display:flex;
+flex-direction:column
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.header-frame{
+width:100%;
+height:50px;
+border:none;
+flex-shrink:0
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer-frame{
+width:100%;
+height:120px;
+border:none;
+flex-shrink:0
+}
+
+
+/* =========================
+   LOGIN WRAP
+========================= */
+
+.login-wrap{
+flex:1;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:8px;
+overflow:auto
+}
+
+
+/* =========================
+   LOGIN CARD
+========================= */
+
+.login-card{
+background:#fff;
+border-radius:6px;
+box-shadow:0 1px 6px rgba(0,0,0,.05);
+width:100%;
+max-width:300px;
+padding:15px 14px 12px;
+text-align:center
+}
+
+h3{
+color:var(--p);
+font-size:19px;
+font-weight:600;
+margin-bottom:4px
+}
+
+.subtitle{
+font-size:11px;
+color:#777;
+margin-bottom:12px
+}
+
+
+/* =========================
+   SOCIAL
+========================= */
+
+.social-btn{
+width:100%;
+padding:8px;
+border:none;
+border-radius:4px;
+background:var(--blue);
+color:#fff;
+font-size:13px;
+font-weight:500;
+cursor:pointer;
+margin-bottom:6px;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:6px;
+transition:.2s
+}
+
+.social-btn:hover{
+opacity:.9
+}
+
+.social-btn .icon-box{
+background:#fff;
+width:22px;
+height:22px;
+border-radius:3px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+font-size:12px
+}
+
+.social-btn.facebook .icon-box{
+color:var(--blue)
+}
+
+.social-btn.google{
+background:#fff;
+color:#333;
+border:1px solid #ddd
+}
+
+.social-btn.google .icon-box{
+color:#c8102e;
+border:1px solid #ddd
+}
+
+
+/* =========================
+   DIVIDER
+========================= */
+
+.divider{
+text-align:center;
+color:#999;
+font-size:11px;
+margin:8px 0;
+position:relative
+}
+
+.divider::before,
+.divider::after{
+content:'';
+position:absolute;
+top:50%;
+width:40%;
+height:1px;
+background:#eee
+}
+
+.divider::before{
+left:0
+}
+
+.divider::after{
+right:0
+}
+
+
+/* =========================
+   INPUT
+========================= */
+
+input{
+width:100%;
+padding:8px;
+border:1px solid #ddd;
+border-radius:4px;
+font-size:12px;
+margin-bottom:8px;
+outline:none
+}
+
+input:focus{
+border-color:var(--p)
+}
+
+
+/* =========================
+   PASSWORD
+========================= */
+
+.password-wrap{
+position:relative
+}
+
+.password-wrap input{
+padding-right:55px
+}
+
+.password-wrap button{
+position:absolute;
+right:10px;
+top:50%;
+transform:translateY(-50%);
+background:none;
+border:none;
+color:var(--p);
+font-size:12px;
+cursor:pointer
+}
+
+
+/* =========================
+   LOGIN BUTTON
+========================= */
+
+.login-btn{
+width:100%;
+padding:9px;
+background:var(--p);
+color:#fff;
+border:none;
+border-radius:4px;
+font-size:13px;
+font-weight:600;
+cursor:pointer;
+margin-top:5px;
+text-transform:uppercase
+}
+
+.login-btn:hover{
+background:#a50d26
+}
+
+.login-btn:disabled{
+opacity:.6;
+cursor:not-allowed
+}
+
+
+/* =========================
+   FORGOT
+========================= */
+
+.forgot{
+font-size:11px;
+color:var(--p);
+text-decoration:none;
+display:block;
+margin:8px 0;
+cursor:pointer
+}
+
+
+/* =========================
+   SWITCH
+========================= */
+
+.switch-text{
+font-size:12px;
+color:#333;
+margin-top:10px
+}
+
+.switch-text span{
+color:var(--p);
+font-weight:600;
+cursor:pointer
+}
+
+
+/* =========================
+   TERMS
+========================= */
+
+.terms{
+font-size:9px;
+color:#888;
+margin-top:10px;
+line-height:1.4
+}
+
+.terms a{
+color:var(--p);
+text-decoration:none
+}
+
+
+/* =========================
+   MESSAGE
+========================= */
+
+.error{
+color:#d00000;
+font-size:12px;
+margin-top:8px
+}
+
+.success{
+color:green;
+font-size:12px;
+margin-top:8px
+}
+
+.loading{
+display:none;
+font-size:11px;
+color:#777;
+margin-top:6px
+}
+
+
+/* =========================
+   FORM
+========================= */
+
+.form{
+display:none
+}
+
+.form.active{
+display:block
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<iframe
+src="header.html"
+class="header-frame"
+scrolling="no">
+</iframe>
+
+
+<!-- =========================
+     LOGIN AREA
+========================= -->
+
+<div class="login-wrap">
+
+<div class="login-card">
+
+
+<!-- =========================
+     LOGIN FORM
+========================= -->
+
+<div
+id="loginForm"
+class="form active">
+
+<h3>Login</h3>
+
+<p class="subtitle">
+SK News Live এ আর্টিকেল লিখতে লগিন করুন
+</p>
+
+
+<button
+type="button"
+class="social-btn facebook"
+onclick="loginWithFacebook()">
+
+<span class="icon-box">
+f
+</span>
+
+Sign in with Facebook
+
+</button>
+
+
+<button
+type="button"
+class="social-btn google">
+
+<span class="icon-box">
+G
+</span>
+
+Sign in with Google
+
+</button>
+
+
+<div class="divider">
+Or
+</div>
+
+
+<form
+id="loginEmailForm"
+onsubmit="handleLogin(event)">
+
+<input
+type="email"
+id="loginEmail"
+placeholder="Email"
+required
+autocomplete="email">
+
+
+<div class="password-wrap">
+
+<input
+type="password"
+id="loginPassword"
+placeholder="Password"
+required
+autocomplete="current-password">
+
+<button
+type="button"
+onclick="togglePass('loginPassword',this)">
+Show
+</button>
+
+</div>
+
+
+<button
+type="submit"
+class="login-btn"
+id="loginBtn">
+
+LOGIN
+
+</button>
+
+</form>
+
+
+<a
+class="forgot"
+onclick="forgotPassword()">
+
+Forgot password?
+
+</a>
+
+
+<p class="switch-text">
+
+New to SK News Live?
+
+<span onclick="showForm('signup')">
+Create an account
+</span>
+
+</p>
+
+</div>
+
+
+<!-- =========================
+     SIGNUP
+========================= -->
+
+<div
+id="signupForm"
+class="form">
+
+<h3>
+Sign Up
+</h3>
+
+<p class="subtitle">
+নতুন একাউন্ট তৈরি করুন
+</p>
+
+
+<button
+type="button"
+class="social-btn facebook"
+onclick="loginWithFacebook()">
+
+<span class="icon-box">
+f
+</span>
+
+Sign up with Facebook
+
+</button>
+
+
+<button
+type="button"
+class="social-btn google">
+
+<span class="icon-box">
+G
+</span>
+
+Sign up with Google
+
+</button>
+
+
+<div class="divider">
+Or
+</div>
+
+
+<form
+id="signupEmailForm"
+onsubmit="handleSignup(event)">
+
+<input
+type="email"
+id="signupEmail"
+placeholder="Email"
+required
+autocomplete="email">
+
+
+<div class="password-wrap">
+
+<input
+type="password"
+id="signupPassword"
+placeholder="Password"
+required
+autocomplete="new-password">
+
+<button
+type="button"
+onclick="togglePass('signupPassword',this)">
+Show
+</button>
+
+</div>
+
+
+<button
+type="submit"
+class="login-btn"
+id="signupBtn">
+
+CREATE ACCOUNT
+
+</button>
+
+</form>
+
+
+<p class="switch-text">
+
+Already have an account?
+
+<span onclick="showForm('login')">
+Login
+</span>
+
+</p>
+
+</div>
+
+
+<p
+class="error"
+id="errorMsg">
+</p>
+
+
+<p
+class="success"
+id="successMsg">
+</p>
+
+
+<div
+class="loading"
+id="loadingMsg">
+
+লোড হচ্ছে...
+
+</div>
+
+
+<p class="terms">
+
+By proceeding, you agree to
+
+<a href="terms.html">
+Terms of Use
+</a>
+
+and
+
+<a href="privacy.html">
+Privacy Policy
+</a>
+
+of SK News Live
+
+</p>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<iframe
+src="footer.html"
+class="footer-frame"
+scrolling="no">
+</iframe>
+
+
+<!-- =========================
+     SUPABASE
+========================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<script>
+
+/* =====================================
+   SUPABASE
+===================================== */
+
+const SUPABASE_URL=
+'https://nsjeprihgudhiczefopu.supabase.co';
+
+const SUPABASE_KEY=
+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5zamVwcmloZ3VkaGljemVmb3B1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMTYxOTAsImV4cCI6MjA5ODY5MjE5MH0.mOpduK47q0bjV-dQpkUPiq8xkhspF6eFqLzrGiaArd4';
+
+const supabaseClient=
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY,
+{
+auth:{
+persistSession:true,
+autoRefreshToken:true,
+detectSessionInUrl:true
+}
+}
+);
+
+
+/* =====================================
+   ELEMENTS
+===================================== */
+
+const errorMsg=
+document.getElementById(
+'errorMsg'
+);
+
+const successMsg=
+document.getElementById(
+'successMsg'
+);
+
+const loadingMsg=
+document.getElementById(
+'loadingMsg'
+);
+
+
+/* =====================================
+   MESSAGE
+===================================== */
+
+function showError(message){
+
+errorMsg.textContent=
+message;
+
+successMsg.textContent='';
+
+}
+
+
+function showSuccess(message){
+
+successMsg.textContent=
+message;
+
+errorMsg.textContent='';
+
+}
+
+
+function clearMessages(){
+
+errorMsg.textContent='';
+
+successMsg.textContent='';
+
+}
+
+
+/* =====================================
+   FORM SWITCH
+===================================== */
+
+function showForm(type){
+
+document
+.querySelectorAll('.form')
+.forEach(form=>{
+form.classList.remove('active');
+});
+
+const form=
+document.getElementById(
+type+'Form'
+);
+
+if(form){
+form.classList.add('active');
+}
+
+clearMessages();
+
+}
+
+
+/* =====================================
+   PASSWORD
+===================================== */
+
+function togglePass(id,btn){
+
+const input=
+document.getElementById(id);
+
+if(
+input.type===
+'password'
+){
+
+input.type='text';
+
+btn.textContent=
+'Hide';
+
+}else{
+
+input.type=
+'password';
+
+btn.textContent=
+'Show';
+
+}
+
+}
+
+
+/* =====================================
+   RETURN PAGE SYSTEM
+===================================== */
+
+const RETURN_PAGE_KEY=
+'sk_login_return_page';
+
+const SETTINGS_RETURN_KEY=
+'sk_settings_return_page';
+
+
+function invalidReturnPage(url){
+
+if(!url)return true;
+
+try{
+
+const u=
+new URL(
+url,
+window.location.origin
+);
+
+if(
+u.origin!==
+window.location.origin
+){
+
+return true;
+
+}
+
+const page=
+u.pathname
+.split('/')
+.pop()
+.toLowerCase();
+
+if(
+page==='login.html'||
+page==='settings.html'
+){
+
+return true;
+
+}
+
+return false;
+
+}catch(e){
+
+return true;
+
+}
+
+}
+
+
+/* =====================================
+   SAVE REFERRER
+===================================== */
+
+function saveReturnPage(){
+
+try{
+
+const referrer=
+document.referrer;
+
+if(!referrer)return;
+
+const current=
+new URL(
+window.location.href
+);
+
+const ref=
+new URL(
+referrer
+);
+
+if(
+ref.origin!==
+current.origin
+){
+
+return;
+
+}
+
+const page=
+ref.pathname
+.split('/')
+.pop()
+.toLowerCase();
+
+if(
+page==='login.html'||
+page==='settings.html'
+){
+
+return;
+
+}
+
+if(
+!invalidReturnPage(
+ref.href
+)
+){
+
+sessionStorage.setItem(
+RETURN_PAGE_KEY,
+ref.href
+);
+
+}
+
+}catch(e){
+
+console.log(
+'Return page error:',
+e
+);
+
+}
+
+}
+
+
+/* =====================================
+   GET RETURN PAGE
+===================================== */
+
+function getReturnPage(){
+
+/*
+ * সর্বপ্রথম Settings থেকে
+ * সংরক্ষিত parent page।
+ */
+
+const settingsPage=
+sessionStorage.getItem(
+SETTINGS_RETURN_KEY
+);
+
+if(
+settingsPage &&
+!invalidReturnPage(
+settingsPage
+)
+){
+
+return settingsPage;
+
+}
+
+
+/*
+ * সাধারণ referrer।
+ */
+
+const savedPage=
+sessionStorage.getItem(
+RETURN_PAGE_KEY
+);
+
+if(
+savedPage &&
+!invalidReturnPage(
+savedPage
+)
+){
+
+return savedPage;
+
+}
+
+
+/*
+ * কিছু না পাওয়া গেলে Home।
+ */
+
+return 'index.html';
+
+}
+
+
+/* =====================================
+   CLEAR RETURN
+===================================== */
+
+function clearReturnPages(){
+
+sessionStorage.removeItem(
+RETURN_PAGE_KEY
+);
+
+sessionStorage.removeItem(
+SETTINGS_RETURN_KEY
+);
+
+}
+
+
+/* =====================================
+   GO BACK AFTER LOGIN
+===================================== */
+
+function goBackAfterLogin(){
+
+const returnPage=
+getReturnPage();
+
+clearReturnPages();
+
+if(
+invalidReturnPage(
+returnPage
+)
+){
+
+window.location.href=
+'index.html';
+
+return;
+
+}
+
+window.location.href=
+returnPage;
+
+}
+
+
+/* =====================================
+   SAVE REFERRER
+===================================== */
+
+saveReturnPage();
+
+
+/* =====================================
+   EMAIL LOGIN
+===================================== */
+
+async function handleLogin(e){
+
+e.preventDefault();
+
+clearMessages();
+
+loadingMsg.style.display=
+'block';
+
+const loginBtn=
+document.getElementById(
+'loginBtn'
+);
+
+loginBtn.disabled=true;
+
+
+const email=
+document
+.getElementById(
+'loginEmail'
+)
+.value
+.trim();
+
+
+const password=
+document
+.getElementById(
+'loginPassword'
+)
+.value;
+
+
+try{
+
+/*
+ * পুরোনো local session
+ * পরিষ্কার করা হচ্ছে।
+ */
+
+await supabaseClient
+.auth
+.signOut({
+scope:'local'
+});
+
+
+/*
+ * Login
+ */
+
+const{
+data,
+error
+}=
+await supabaseClient
+.auth
+.signInWithPassword({
+
+email:email,
+
+password:password
+
+});
+
+
+if(error){
+
+console.error(
+'LOGIN ERROR:',
+error
+);
+
+loadingMsg.style.display=
+'none';
+
+loginBtn.disabled=false;
+
+showError(
+error.message||
+'ইমেইল অথবা পাসওয়ার্ড ভুল।'
+);
+
+return;
+
+}
+
+
+/*
+ * Session নিশ্চিত করা
+ */
+
+const{
+data:sessionData,
+error:sessionError
+}=
+await supabaseClient
+.auth
+.getSession();
+
+if(
+sessionError ||
+!sessionData?.session
+){
+
+loadingMsg.style.display=
+'none';
+
+loginBtn.disabled=false;
+
+showError(
+'Login হয়েছে কিন্তু Session তৈরি হয়নি। আবার চেষ্টা করুন।'
+);
+
+return;
+
+}
+
+
+/*
+ * Login সফল
+ */
+
+showSuccess(
+'লগিন সফল! ফিরে যাচ্ছে...'
+);
+
+loadingMsg.style.display=
+'none';
+
+
+setTimeout(()=>{
+
+goBackAfterLogin();
+
+},500);
+
+
+}catch(error){
+
+console.error(
+'LOGIN EXCEPTION:',
+error
+);
+
+loadingMsg.style.display=
+'none';
+
+loginBtn.disabled=false;
+
+showError(
+'লগইন করার সময় সমস্যা হয়েছে। আবার চেষ্টা করুন।'
+);
+
+}
+
+}
+
+
+/* =====================================
+   SIGN UP
+===================================== */
+
+async function handleSignup(e){
+
+e.preventDefault();
+
+clearMessages();
+
+loadingMsg.style.display=
+'block';
+
+const signupBtn=
+document.getElementById(
+'signupBtn'
+);
+
+signupBtn.disabled=true;
+
+
+const email=
+document
+.getElementById(
+'signupEmail'
+)
+.value
+.trim();
+
+
+const password=
+document
+.getElementById(
+'signupPassword'
+)
+.value;
+
+
+try{
+
+const{
+data,
+error
+}=
+await supabaseClient
+.auth
+.signUp({
+
+email:email,
+
+password:password
+
+});
+
+
+loadingMsg.style.display=
+'none';
+
+signupBtn.disabled=false;
+
+
+if(error){
+
+showError(
+error.message
+);
+
+return;
+
+}
+
+
+if(
+data?.session
+){
+
+showSuccess(
+'সাইন আপ সফল! লগিন হচ্ছে...'
+);
+
+setTimeout(()=>{
+
+goBackAfterLogin();
+
+},500);
+
+return;
+
+}
+
+
+showSuccess(
+'সাইন আপ সফল! Email verification প্রয়োজন হলে আপনার Email চেক করুন।'
+);
+
+setTimeout(()=>{
+
+showForm('login');
+
+document
+.getElementById(
+'loginEmail'
+)
+.value=
+email;
+
+},1500);
+
+
+}catch(error){
+
+loadingMsg.style.display=
+'none';
+
+signupBtn.disabled=false;
+
+console.error(
+'SIGNUP ERROR:',
+error
+);
+
+showError(
+'সাইন আপ করার সময় সমস্যা হয়েছে।'
+);
+
+}
+
+}
+
+
+/* =====================================
+   GOOGLE LOGIN
+===================================== */
+
+async function loginWithGoogle(){
+
+try{
+
+const returnPage=
+getReturnPage();
+
+if(
+returnPage &&
+!invalidReturnPage(
+returnPage
+)
+){
+
+sessionStorage.setItem(
+SETTINGS_RETURN_KEY,
+returnPage
+);
+
+}
+
+
+const redirectUrl=
+new URL(
+'login.html?oauth=success',
+window.location.href
+).href;
+
+
+const{
+error
+}=
+await supabaseClient
+.auth
+.signInWithOAuth({
+
+provider:'google',
+
+options:{
+redirectTo:
+redirectUrl
+}
+
+});
+
+
+if(error){
+
+showError(
+error.message
+);
+
+}
+
+}catch(error){
+
+console.error(
+'GOOGLE LOGIN ERROR:',
+error
+);
+
+showError(
+'Google Login করা যায়নি।'
+);
+
+}
+
+}
+
+
+/* =====================================
+   FACEBOOK LOGIN
+===================================== */
+
+async function loginWithFacebook(){
+
+try{
+
+const returnPage=
+getReturnPage();
+
+if(
+returnPage &&
+!invalidReturnPage(
+returnPage
+)
+){
+
+sessionStorage.setItem(
+SETTINGS_RETURN_KEY,
+returnPage
+);
+
+}
+
+
+const redirectUrl=
+new URL(
+'login.html?oauth=success',
+window.location.href
+).href;
+
+
+const{
+error
+}=
+await supabaseClient
+.auth
+.signInWithOAuth({
+
+provider:'facebook',
+
+options:{
+redirectTo:
+redirectUrl
+}
+
+});
+
+
+if(error){
+
+showError(
+error.message
+);
+
+}
+
+}catch(error){
+
+console.error(
+'FACEBOOK LOGIN ERROR:',
+error
+);
+
+showError(
+'Facebook Login করা যায়নি।'
+);
+
+}
+
+}
+
+
+/* =====================================
+   FORGOT PASSWORD
+===================================== */
+
+async function forgotPassword(){
+
+const email=
+prompt(
+'আপনার Email লিখুন:'
+);
+
+if(!email)return;
+
+try{
+
+const{
+error
+}=
+await supabaseClient
+.auth
+.resetPasswordForEmail(
+email,
+{
+redirectTo:
+new URL(
+'reset-password.html',
+window.location.href
+).href
+}
+);
+
+if(error){
+
+alert(
+'Reset link পাঠানো যায়নি: '+
+error.message
+);
+
+return;
+
+}
+
+alert(
+'Reset link পাঠানো হয়েছে'
+);
+
+}catch(error){
+
+console.error(
+'RESET PASSWORD ERROR:',
+error
+);
+
+alert(
+'Reset link পাঠাতে সমস্যা হয়েছে।'
+);
+
+}
+
+}
+
+
+/* =====================================
+   OAUTH CHECK
+===================================== */
+
+async function checkOAuthLogin(){
+
+try{
+
+const{
+data,
+error
+}=
+await supabaseClient
+.auth
+.getSession();
+
+if(error){
+
+console.error(
+'SESSION ERROR:',
+error
+);
+
+return;
+
+}
+
+const params=
+new URLSearchParams(
+window.location.search
+);
+
+const oauth=
+params.get('oauth');
+
+
+/*
+ * Google / Facebook থেকে
+ * সফলভাবে ফিরে এসেছে।
+ */
+
+if(
+oauth==='success' &&
+data?.session
+){
+
+showSuccess(
+'লগিন সফল! ফিরে যাচ্ছে...'
+);
+
+setTimeout(()=>{
+
+goBackAfterLogin();
+
+},500);
+
+return;
+
+}
+
+
+/*
+ * যদি Login page সরাসরি খোলা হয়
+ * এবং আগে থেকেই session থাকে,
+ * তাহলে return page-এ যাবে।
+ */
+
+if(
+data?.session &&
+!oauth
+){
+
+const returnPage=
+getReturnPage();
+
+if(
+!invalidReturnPage(
+returnPage
+)
+){
+
+window.location.href=
+returnPage;
+
+}else{
+
+window.location.href=
+'index.html';
+
+}
+
+}
+
+}catch(error){
+
+console.error(
+'AUTH CHECK ERROR:',
+error
+);
+
+}
+
+}
+
+
+/* =====================================
+   AUTH STATE
+===================================== */
+
+supabaseClient
+.auth
+.onAuthStateChange(
+(event,session)=>{
+
+console.log(
+'AUTH EVENT:',
+event
+);
+
+}
+);
+
+
+/* =====================================
+   START
+===================================== */
+
+checkOAuthLogin();
+
+</script>
+
+</body>
+</html>
