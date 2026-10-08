@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Articles - SK News Live</title>
+  <script src="theme.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{margin:0;min-height:100%;font-family:'Noto Sans Bengali',sans-serif;background:#f5f5f5;color:#222}
+body{min-height:100vh;display:flex;flex-direction:column}
+iframe{width:100%;border:0;display:block}
+.header-frame{height:112px;flex-shrink:0}
+.main{width:100%;max-width:1100px;margin:18px auto;padding:0 10px;flex:1}
+.card{background:#fff;border-radius:10px;padding:16px;box-shadow:0 2px 10px #0001}
+.title{text-align:center;margin-bottom:14px}
+.title h1{font-size:25px;color:#a90032}
+.user{font-size:13px;color:#777;margin-top:4px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.stat{border:1px solid #e7e7e7;border-radius:8px;text-align:center;padding:9px}
+.num{font-size:20px;font-weight:800;color:#a90032}
+.lab{font-size:11px;color:#999}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:8px 0 12px;flex-wrap:wrap}
+.count{font-size:14px;font-weight:700}
+.actions{display:flex;gap:6px}
+.btn{border:0;border-radius:6px;padding:8px 11px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.write{background:#e40032;color:#fff}
+.refresh{background:#555;color:#fff}
+.logout{background:#eee;color:#333}
+.filters{display:flex;gap:8px;margin-bottom:12px}
+.search{position:relative;flex:1}
+.search i{position:absolute;left:10px;top:12px;color:#999}
+.search input{width:100%;height:38px;border:1px solid #ddd;border-radius:6px;padding:0 10px 0 32px;font-family:inherit;outline:0}
+.status{height:38px;min-width:140px;border:1px solid #ddd;border-radius:6px;padding:0 8px;font-family:inherit;background:#fff}
+.msg{display:none;padding:9px;border-radius:6px;margin-bottom:10px;font-size:12px}
+.msg.success{background:#eaf8ee;color:#198754}
+.msg.error{background:#fff0f0;color:#c62828}
+.msg.info{background:#eef6ff;color:#1769aa}
+.list{border-top:1px solid #eee;padding-top:10px}
+.article{border:1px solid #e2e2e2;border-radius:8px;padding:12px;margin-bottom:8px;background:#fff}
+.ahead{display:flex;justify-content:space-between;gap:8px}
+.atitle{font-size:17px;font-weight:800;line-height:1.4}
+.cat{font-size:11px;color:#777;margin-top:3px}
+.desc{font-size:12px;color:#888;line-height:1.6;margin-top:8px}
+.meta{display:flex;align-items:center;gap:7px;margin-top:9px;flex-wrap:wrap}
+.badge{font-size:10px;font-weight:700;padding:4px 8px;border-radius:20px}
+.pub{background:#e8f7ec;color:#238443}
+.draft{background:#fff5dc;color:#d68910}
+.sched{background:#eaf1ff;color:#2767c7}
+.date{font-size:10px;color:#999}
+.article-actions{display:flex;gap:5px}
+.ibtn{width:32px;height:30px;border:0;border-radius:5px;cursor:pointer}
+.view{background:#f1f1f1;color:#555}
+.edit{background:#eef5ff;color:#2166c1}
+.del{background:#fff0f0;color:#d62828}
+.empty{text-align:center;padding:40px 10px;color:#999}
+.empty i{font-size:38px;color:#ccc;margin-bottom:8px}
+.login{text-align:center;padding:45px 10px}
+.login h2{color:#a90032;margin:8px}
+.login p{color:#999;margin-bottom:15px}
+.login a{display:inline-block;background:#e40032;color:#fff;text-decoration:none;padding:9px 22px;border-radius:6px}
+.loading{text-align:center;padding:35px;color:#999}
+.footer-frame{width:100%;height:220px;margin-top:18px;flex-shrink:0}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:9999;align-items:center;justify-content:center;padding:12px}
+.modal.active{display:flex}
+.modalbox{background:#fff;width:100%;max-width:650px;max-height:92vh;overflow:auto;border-radius:9px;padding:15px}
+.mhead{display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding-bottom:10px;margin-bottom:12px}
+.mhead h2{font-size:19px;color:#a90032}
+.close{border:0;width:30px;height:30px;border-radius:50%;cursor:pointer}
+.group{margin-bottom:10px}
+.group label{display:block;font-size:12px;font-weight:700;margin-bottom:4px}
+.input,.textarea{width:100%;border:1px solid #ddd;border-radius:6px;padding:9px;font-family:inherit;outline:0}
+.textarea{min-height:110px;resize:vertical}
+.content{min-height:200px}
+.mbuttons{display:flex;justify-content:flex-end;gap:7px;margin-top:12px}
+.save{background:#e40032;color:#fff}
+.cancel{background:#eee}
+.request{background:#d62828;color:#fff}
+@media(min-width:769px){
+body{padding-bottom:220px}
+.footer-frame{position:fixed;left:0;bottom:0;margin:0;z-index:1000}
+}
+@media(max-width:768px){
+body{padding-bottom:0}
+.footer-frame{position:relative;margin-top:18px;height:220px}
+}
+@media(max-width:650px){
+.main{margin:10px auto;padding:0 7px}
+.card{padding:11px}
+.title h1{font-size:22px}
+.stats{gap:5px}
+.stat{padding:8px 3px}
+.num{font-size:18px}
+.lab{font-size:10px}
+.filters{flex-direction:column}
+.status{width:100%}
+.ahead{flex-direction:column}
+.article-actions{width:100%}
+.ibtn{flex:1}
+.top{align-items:flex-start}
+.actions{width:100%}
+.btn{flex:1}
+}
+</style>
+</head>
+
+<body>
+
+<iframe src="header.html" class="header-frame" scrolling="no"></iframe>
+
+<main class="main">
+<section class="card">
+
+<div class="title">
+<h1>📂 My Articles</h1>
+<div class="user" id="userInfo">লগইন তথ্য লোড হচ্ছে...</div>
+</div>
+
+<div id="loginRequired" class="login" style="display:none">
+<div style="font-size:45px">🔐</div>
+<h2>Login Required</h2>
+<p>আপনার নিজের Article দেখতে প্রথমে Login করুন।</p>
+<a href="login.html">Login করুন</a>
+</div>
+
+<div id="loggedContent" style="display:none">
+
+<div class="stats">
+<div class="stat"><div class="num" id="totalCount">0</div><div class="lab">মোট Article</div></div>
+<div class="stat"><div class="num" id="publishedCount">0</div><div class="lab">Published</div></div>
+<div class="stat"><div class="num" id="draftCount">0</div><div class="lab">Draft</div></div>
+<div class="stat"><div class="num" id="scheduledCount">0</div><div class="lab">Scheduled</div></div>
+</div>
+
+<div class="top">
+<div class="count" id="articleModeText">আমার আর্টিকেল: <span id="articleCountText">0</span></div>
+<div class="actions">
+<div id="adminArticleModes" style="display:none;gap:6px;flex-wrap:wrap">
+<button class="btn refresh" id="myArticlesBtn" type="button" onclick="setArticleMode('mine')">👤 আমার Article</button>
+<button class="btn" id="allArticlesBtn" type="button" onclick="setArticleMode('all')" style="background:#7b1fa2;color:#fff">🌐 সকল Article</button>
+</div>
+<button class="btn refresh" type="button" onclick="loadMyArticles()">🔄 Refresh</button>
+<button class="btn write" type="button" onclick="writeNewArticle()">✍️ Write Now</button>
+<button class="btn logout" type="button" onclick="logoutUser()">🚪 Logout</button>
+</div>
+</div>
+
+<div id="messageBox" class="msg"></div>
+
+<div class="filters">
+<div class="search">
+<i class="fa-solid fa-magnifying-glass"></i>
+<input id="articleSearch" type="search" placeholder="Article খুঁজুন...">
+</div>
+<select id="statusFilter" class="status">
+<option value="all">সব Status</option>
+<option value="published">Published</option>
+<option value="draft">Draft</option>
+<option value="scheduled">Scheduled</option>
+</select>
+</div>
+
+<div id="articleList" class="list">
+<div class="loading">⏳ Article লোড হচ্ছে...</div>
+</div>
+
+</div>
+</section>
+</main>
+
+<!-- EDIT MODAL -->
+<div class="modal" id="editModal">
+<div class="modalbox">
+<div class="mhead">
+<h2>✏️ Article Edit</h2>
+<button class="close" type="button" onclick="closeEditModal()">×</button>
+</div>
+
+<form id="editForm">
+<input type="hidden" id="editId">
+
+<div class="group">
+<label>Article Title</label>
+<input id="editTitle" class="input" required>
+</div>
+
+<div class="group">
+<label>Category</label>
+<select id="editCategory" class="input">
+<option value="জাতীয়">জাতীয়</option>
+<option value="জাতীয়">জাতীয়</option>
+<option value="রাজনীতি">রাজনীতি</option>
+<option value="আন্তর্জাতিক">আন্তর্জাতিক</option>
+<option value="খেলা">খেলা</option>
+<option value="বিনোদন">বিনোদন</option>
+<option value="টেক">টেক</option>
+<option value="লাইফস্টাইল">লাইফস্টাইল</option>
+<option value="অন্যান্য">অন্যান্য</option>
+</select>
+</div>
+
+<div class="group">
+<label>Description</label>
+<textarea id="editDescription" class="textarea"></textarea>
+</div>
+
+<div class="group">
+<label>Content</label>
+<textarea id="editContent" class="textarea content"></textarea>
+</div>
+
+<div class="group">
+<label>Image URL</label>
+<input id="editImage" class="input" placeholder="https://...">
+</div>
+
+<div class="group">
+<label>Status</label>
+<select id="editStatus" class="input">
+<option value="published">Published</option>
+<option value="draft">Draft</option>
+<option value="scheduled">Scheduled</option>
+</select>
+</div>
+
+<div class="mbuttons">
+<button type="button" class="btn cancel" onclick="closeEditModal()">Cancel</button>
+<button type="submit" class="btn save" id="saveEditBtn">💾 Save Changes</button>
+</div>
+</form>
+</div>
+</div>
+
+<!-- DELETE REQUEST MODAL -->
+<div class="modal" id="deleteModal">
+<div class="modalbox" style="max-width:430px;text-align:center">
+<div style="font-size:42px;color:#d62828">🗑️</div>
+<h2 style="color:#a90032">Delete Request পাঠাবেন?</h2>
+<p style="color:#777;font-size:13px;margin:8px 0">
+User নিজে Article Delete করতে পারবে না। Admin-এর কাছে Delete Request যাবে।
+</p>
+<div id="deleteArticleName" style="font-weight:700;margin:10px"></div>
+<div class="mbuttons">
+<button class="btn cancel" type="button" onclick="closeDeleteModal()">Cancel</button>
+<button class="btn request" type="button" id="confirmDeleteBtn" onclick="sendDeleteRequest()">📩 Request Send</button>
+</div>
+</div>
+</div>
+
+<iframe src="footer.html" class="footer-frame" scrolling="no"></iframe>
+
+<script>
+const SUPABASE_URL='https://nsjeprihgudhiczefopu.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_Q_0XpNcY3YcWK-1ZPTIbUg_dcUJOIJ0';
+const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+let currentUser=null,allArticles=[],filteredArticles=[],deleteTargetId=null,isAdmin=false,articleMode='mine';
+
+const $=id=>document.getElementById(id);
+
+async function checkLogin(){
+try{
+const {data,error}=await supabaseClient.auth.getSession();
+if(error||!data.session){showLogin();return}
+currentUser=data.session.user;
+$('userInfo').innerHTML='👤 লগইন: <strong>'+esc(currentUser.email||'')+'</strong>';
+$('loginRequired').style.display='none';
+$('loggedContent').style.display='block';
+await checkAdminRole();
+await loadMyArticles();
+}catch(e){
+console.error(e);
+showLogin();
+}
+}
+
+async function checkAdminRole(){
+if(!currentUser)return;
+try{
+const {data:profile,error}=await supabaseClient
+.from('profiles')
+.select('role')
+.eq('id',currentUser.id)
+.maybeSingle();
+if(error){
+console.error('Role check error:',error);
+return;
+}
+isAdmin=profile?.role==='admin';
+
+/* Admin-এর জন্য শুধু Admin mode switch দেখাবে */
+if($('adminArticleModes')){
+$('adminArticleModes').style.display=isAdmin?'flex':'none';
+}
+
+/* সাধারণ User সবসময় নিজের Article mode-এ থাকবে */
+if(!isAdmin) articleMode='mine';
+
+updateModeButtons();
+}catch(e){
+console.error('Admin role check failed:',e);
+isAdmin=false;
+}
+}
+
+function showLogin(){
+$('loginRequired').style.display='block';
+$('loggedContent').style.display='none';
+$('userInfo').textContent='🔒 লগইন ছাড়া Article দেখা যাবে না';
+}
+
+async function loadMyArticles(){
+if(!currentUser)return showLogin();
+$('articleList').innerHTML='<div class="loading">⏳ Article লোড হচ্ছে...</div>';
+hideMessage();
+
+try{
+const {data,error}=await supabaseClient.from('articles').select('*').order('created_at',{ascending:false});
+if(error)throw error;
+
+const rows=Array.isArray(data)?data:[];
+
+/*
+  Admin হলে দুইটি View:
+  mine = শুধু নিজের Article
+  all  = সবার Article
+
+  সাধারণ User সবসময় শুধু নিজের Article দেখবে।
+*/
+if(isAdmin && articleMode==='all'){
+allArticles=rows;
+}else{
+allArticles=filterMine(rows);
+articleMode='mine';
+}
+
+updateModeButtons();
+
+if($('articleModeText')){
+$('articleModeText').innerHTML=
+(articleMode==='all' && isAdmin)
+?'👑 সকল Article: <span id="articleCountText">'+allArticles.length+'</span>'
+:'👤 আমার আর্টিকেল: <span id="articleCountText">'+allArticles.length+'</span>';
+}
+
+updateStats();
+applyFilters();
+}catch(e){
+console.error(e);
+$('articleList').innerHTML='<div class="empty"><i class="fa-solid fa-circle-xmark"></i><h3>Article লোড করা যাচ্ছে না</h3><p>'+esc(e.message)+'</p></div>';
+showMessage('Supabase থেকে Article লোড হয়নি: '+e.message,'error');
+}
+}
+
+function setArticleMode(mode){
+/* সাধারণ User এই function দিয়ে All mode চালু করতে পারবে না */
+if(!isAdmin && mode!=='mine')return;
+articleMode=(isAdmin && mode==='all')?'all':'mine';
+loadMyArticles();
+}
+
+function updateModeButtons(){
+const box=$('adminArticleModes');
+const mine=$('myArticlesBtn');
+const all=$('allArticlesBtn');
+if(!box)return;
+box.style.display=isAdmin?'flex':'none';
+if(mine){
+ mine.style.background=articleMode==='mine'?'#555':'#eee';
+ mine.style.color=articleMode==='mine'?'#fff':'#333';
+}
+if(all){
+ all.style.background=articleMode==='all'?'#7b1fa2':'#eee';
+ all.style.color=articleMode==='all'?'#fff':'#333';
+}
+}
+
+function filterMine(rows){
+if(!currentUser)return[];
+const id=String(currentUser.id||'').toLowerCase();
+const email=String(currentUser.email||'').toLowerCase();
+const fields=['author_id','user_id','writer_id','created_by','author_user_id','userId','author_email','writer_email','authorEmail','writerEmail','email'];
+const hasOwner=rows.some(a=>fields.some(f=>Object.prototype.hasOwnProperty.call(a,f)&&a[f]!=null&&String(a[f]).trim()!==''));
+if(!hasOwner)return [];
+return rows.filter(a=>fields.some(f=>{
+if(!Object.prototype.hasOwnProperty.call(a,f))return false;
+const v=String(a[f]??'').toLowerCase().trim();
+return v===id||v===email;
+}));
+}
+
+function getStatus(a){
+let s=a.status;
+if(!s)s=(a.is_published===true||a.published===true)?'published':'draft';
+s=String(s).toLowerCase().trim();
+if(s==='publish'||s==='published')return'published';
+if(s==='schedule'||s==='scheduled')return'scheduled';
+return'draft';
+}
+
+function updateStats(){
+let p=0,d=0,s=0;
+allArticles.forEach(a=>{
+const x=getStatus(a);
+if(x==='published')p++;
+else if(x==='draft')d++;
+else s++;
+});
+$('totalCount').textContent=allArticles.length;
+$('publishedCount').textContent=p;
+$('draftCount').textContent=d;
+$('scheduledCount').textContent=s;
+$('articleCountText').textContent=allArticles.length;
+}
+
+function applyFilters(){
+const q=$('articleSearch').value.toLowerCase().trim();
+const sf=$('statusFilter').value;
+filteredArticles=allArticles.filter(a=>{
+const text=[a.title,a.description,a.summary,a.content,a.category].map(x=>String(x||'').toLowerCase()).join(' ');
+return(!q||text.includes(q))&&(sf==='all'||getStatus(a)===sf);
+});
+renderArticles();
+}
+
+function renderArticles(){
+const list=$('articleList');
+if(!filteredArticles.length){
+list.innerHTML='<div class="empty"><i class="fa-regular fa-folder-open"></i><h3>কোনো Article পাওয়া যায়নি</h3><p>Search অথবা Filter পরিবর্তন করে দেখুন।</p></div>';
+return;
+}
+list.innerHTML='';
+filteredArticles.forEach(a=>{
+const s=getStatus(a);
+const desc=a.description||a.summary||strip(a.content||'').slice(0,220);
+const div=document.createElement('div');
+div.className='article';
+div.innerHTML=`
+<div class="ahead">
+<div style="flex:1">
+<div class="atitle">${esc(a.title||'শিরোনাম নেই')}</div>
+<div class="cat">📂 ${esc(a.category||'অন্যান্য')}</div>
+</div>
+<div class="article-actions">
+<button class="ibtn view" title="View" onclick="viewArticle('${js(a.id)}')">👁</button>
+<button class="ibtn edit" title="Edit" onclick="openEditModal('${js(a.id)}')">✏️</button>
+<button class="ibtn del" title="Delete Request" onclick="openDeleteModal('${js(a.id)}')">🗑️</button>
+</div>
+</div>
+<div class="desc">${esc(desc||'কোনো Description নেই')}</div>
+<div class="meta">
+<span class="badge ${s==='published'?'pub':s==='draft'?'draft':'sched'}">${s==='published'?'✓ Published':s==='draft'?'✎ Draft':'⏰ Scheduled'}</span>
+<span class="date">📅 ${formatDate(a.created_at)}</span>
+</div>`;
+list.appendChild(div);
+});
+}
+
+/* WRITE */
+function writeNewArticle(){
+window.location.href='Write.html';
+}
+
+/* VIEW */
+function viewArticle(id){
+window.location.href='article.html?id='+encodeURIComponent(id);
+}
+
+/* EDIT */
+function openEditModal(id){
+const a=allArticles.find(x=>String(x.id)===String(id));
+if(!a)return showMessage('Article পাওয়া যায়নি।','error');
+
+$('editId').value=a.id;
+$('editTitle').value=a.title||'';
+$('editCategory').value=a.category||'জাতীয়';
+$('editDescription').value=a.description||a.summary||'';
+$('editContent').value=a.content||'';
+$('editImage').value=a.image_url||a.image||'';
+$('editStatus').value=getStatus(a);
+$('editModal').classList.add('active');
+}
+
+function closeEditModal(){
+$('editModal').classList.remove('active');
+}
+
+/* SAVE EDIT */
+$('editForm').addEventListener('submit',async e=>{
+e.preventDefault();
+const id=$('editId').value;
+const old=allArticles.find(x=>String(x.id)===String(id));
+if(!old)return;
+
+const btn=$('saveEditBtn');
+btn.disabled=true;
+btn.textContent='⏳ Saving...';
+
+try{
+const payload={};
+if('title'in old)payload.title=$('editTitle').value.trim();
+if('category'in old)payload.category=$('editCategory').value;
+if('description'in old)payload.description=$('editDescription').value.trim();
+if('summary'in old)payload.summary=$('editDescription').value.trim();
+if('content'in old)payload.content=$('editContent').value;
+if('image_url'in old)payload.image_url=$('editImage').value.trim();
+if('image'in old&&!('image_url'in old))payload.image=$('editImage').value.trim();
+
+const status=$('editStatus').value;
+if('status'in old)payload.status=status;
+else if('is_published'in old)payload.is_published=status==='published';
+else if('published'in old)payload.published=status==='published';
+if('updated_at'in old)payload.updated_at=new Date().toISOString();
+
+let updateQuery=supabaseClient.from('articles').update(payload).eq('id',id);
+if(!isAdmin)updateQuery=updateQuery.eq('author_id',currentUser.id);
+const {error}=await updateQuery;
+if(error)throw error;
+
+closeEditModal();
+showMessage('Article সফলভাবে Update হয়েছে ✅','success');
+await loadMyArticles();
+}catch(e){
+console.error(e);
+showMessage('Update করতে সমস্যা হয়েছে: '+e.message,'error');
+}finally{
+btn.disabled=false;
+btn.textContent='💾 Save Changes';
+}
+});
+
+/* DELETE REQUEST */
+function openDeleteModal(id){
+const a=allArticles.find(x=>String(x.id)===String(id));
+if(!a)return;
+deleteTargetId=id;
+$('deleteArticleName').textContent=a.title||'এই Article';
+$('deleteModal').classList.add('active');
+}
+
+function closeDeleteModal(){
+$('deleteModal').classList.remove('active');
+deleteTargetId=null;
+}
+
+async function sendDeleteRequest(){
+if(!deleteTargetId||!currentUser)return;
+
+const btn=$('confirmDeleteBtn');
+btn.disabled=true;
+btn.textContent='⏳ Sending...';
+
+try{
+const article=allArticles.find(a=>String(a.id)===String(deleteTargetId));
+if(!article)throw new Error('Article পাওয়া যায়নি');
+
+const request={
+article_id:article.id,
+requester_id:currentUser.id,
+requester_email:currentUser.email||'',
+article_title:article.title||'',
+status:'pending'
+};
+
+const {error}=await supabaseClient.from('delete_requests').insert(request);
+if(error)throw error;
+
+closeDeleteModal();
+showMessage('✅ Delete Request Admin-এর কাছে পাঠানো হয়েছে।','success');
+}catch(e){
+console.error(e);
+showMessage('❌ Delete Request পাঠানো যায়নি: '+e.message,'error');
+}finally{
+btn.disabled=false;
+btn.textContent='📩 Request Send';
+}
+}
+
+/* LOGOUT */
+async function logoutUser(){
+if(!confirm('আপনি কি Logout করতে চান?'))return;
+
+const btn=document.querySelector('.logout');
+btn.disabled=true;
+btn.textContent='⏳ Logout...';
+
+try{
+const {error}=await supabaseClient.auth.signOut();
+if(error)throw error;
+currentUser=null;
+allArticles=[];
+filteredArticles=[];
+location.replace('login.html');
+}catch(e){
+console.error(e);
+showMessage('Logout হয়নি: '+e.message,'error');
+btn.disabled=false;
+btn.textContent='🚪 Logout';
+}
+}
+
+/* SEARCH */
+$('articleSearch').addEventListener('input',applyFilters);
+$('statusFilter').addEventListener('change',applyFilters);
+
+/* MODALS */
+$('editModal').addEventListener('click',e=>{
+if(e.target===$('editModal'))closeEditModal();
+});
+$('deleteModal').addEventListener('click',e=>{
+if(e.target===$('deleteModal'))closeDeleteModal();
+});
+document.addEventListener('keydown',e=>{
+if(e.key==='Escape'){
+closeEditModal();
+closeDeleteModal();
+}
+});
+
+/* MESSAGE */
+let timer;
+function showMessage(text,type='info'){
+const box=$('messageBox');
+clearTimeout(timer);
+box.className='msg '+type;
+box.textContent=text;
+box.style.display='block';
+timer=setTimeout(hideMessage,5000);
+}
+function hideMessage(){
+$('messageBox').style.display='none';
+}
+
+/* HELPERS */
+function esc(v){
+return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+function js(v){
+return String(v??'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+}
+function strip(v){
+const d=document.createElement('div');
+d.innerHTML=String(v||'');
+return d.textContent||d.innerText||'';
+}
+function formatDate(v){
+if(!v)return'তারিখ নেই';
+const d=new Date(v);
+if(isNaN(d.getTime()))return String(v);
+return d.toLocaleString('bn-BD',{day:'numeric',month:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',hour12:true});
+}
+
+/* AUTH */
+supabaseClient.auth.onAuthStateChange((event)=>{
+if(event==='SIGNED_OUT'){
+currentUser=null;
+allArticles=[];
+showLogin();
+}
+});
+
+checkLogin();
+</script>
+</body>
+</html>

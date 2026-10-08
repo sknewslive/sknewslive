@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Settings - SK News Live</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--p:#c8102e}
+*{box-sizing:border-box;font-family:'Hind Siliguri',Arial,sans-serif}
+html,body{margin:0;padding:0}
+body{background:#f5f7fa;color:#000;padding:10px;transition:.25s}
+body.dark{background:#0b1220;color:#fff}
+.container{max-width:500px;margin:0 auto;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px #0001}
+body.dark.container{background:#1a2234}
+.header{display:flex;justify-content:space-between;align-items:center;padding:15px;border-bottom:1px solid #ddd}
+body.dark.header{border-color:#ffffff26}
+.header h2{margin:0;font-size:20px;color:var(--p)}
+.header-right{color:#000;font-size:13px;display:flex;align-items:center;gap:8px;font-weight:500}
+body.dark.header-right{color:#fff}
+.closeBtn{font-size:18px;background:#ddd;border-radius:4px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#000;font-weight:bold}
+.closeBtn:hover{background:#ccc}
+.settings-list{list-style:none;padding:0;margin:0}
+.settings-list>li{border-bottom:1px solid #ddd}
+body.dark.settings-list>li{border-color:#ffffff1a}
+.row{display:flex;justify-content:space-between;align-items:center;padding:12px 15px;cursor:pointer;color:#000;user-select:none}
+body.dark.row{color:#fff}
+.row:hover{background:#f0f0f0}
+body.dark.row:hover{background:#ffffff14}
+.row strong{font-size:15px;display:flex;align-items:center;gap:8px;font-weight:600}
+.small-muted{color:#000;font-size:12px;font-weight:500}
+body.dark.small-muted{color:#fff}
+.badge{background:var(--p);color:#fff;padding:3px 10px;border-radius:15px;font-size:11px;font-weight:bold}
+.submenu{list-style:none;padding:0 15px 0 35px;margin:0;display:none;background:#fafafa}
+body.dark.submenu{background:#151d2d}
+.submenu.show{display:block}
+.submenu li{padding:10px 0;border-bottom:1px solid #eee;font-size:14px;cursor:pointer;color:#000;font-weight:500}
+body.dark.submenu li{border-color:#ffffff14;color:#fff}
+.submenu li:last-child{border:0}
+.submenu li:hover{color:var(--p)}
+.dashboard-stats div{margin:6px 0;font-size:14px;color:#000}
+body.dark.dashboard-stats div{color:#fff}
+.login-item{color:#16803c!important;font-weight:700!important}
+.logout-item{color:red!important;font-weight:700!important}
+.theme-control{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600}
+.theme-label{min-width:38px;text-align:center}
+.theme-label.light{color:#d88a00}
+.theme-label.dark{color:#1877f2}
+.theme-switch{width:58px;height:30px;border:0;padding:3px;border-radius:20px;background:#f0b400;position:relative;cursor:pointer;transition:.25s;box-shadow:inset 0 1px 4px #0003}
+.theme-switch::after{content:'☀️';position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;transition:.25s;box-shadow:0 1px 4px #0003}
+.theme-switch.dark{background:#1877f2}
+.theme-switch.dark::after{content:'🌙';left:31px}
+.theme-info{font-size:11px;font-weight:500;color:#777}
+body.dark.theme-info{color:#ddd}
+@media(max-width:600px){body{padding:5px}.container{width:100%;max-width:500px}.row{padding:11px 12px}.submenu{padding-left:30px}.header{padding:13px 12px}}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h2 data-i18n="settings_title">Settings</h2>
+<div class="header-right"><span id="userNameLabel" data-i18n="guest">Hi, Guest</span><span class="closeBtn" onclick="closeSettings()">✕</span></div>
+</div>
+<ul class="settings-list">
+<li id="userProfileSection" style="display:none">
+<div class="row" onclick="toggleMenu(this)"><div style="display:flex;gap:8px;align-items:center"><strong data-i18n="profile">👤 Profile</strong><span class="small-muted" data-i18n="account">Account</span></div><div class="badge" data-i18n="manage">Manage</div></div>
+<ul class="submenu"><li onclick="go('my-profile.html')">👤 My-Profile</li><li onclick="go('edit-profile.html')">✏️ Edit Profile</li><li onclick="go('drafts.html')">📄 Saved Drafts</li><li onclick="go('privacy.html')">🔒 Account Privacy</li><li onclick="go('delete-account.html')" style="color:red">🗑️ Delete Account</li></ul>
+</li>
+<li id="userDashboardSection" style="display:none">
+<div class="row" onclick="toggleMenu(this)"><div style="display:flex;gap:8px;align-items:center"><strong data-i18n="dashboard">📋 Dashboard</strong><span class="small-muted" data-i18n="stats_small">Site / User stats</span></div><div class="badge" data-i18n="stats">Stats</div></div>
+<ul class="submenu">
+<li><strong>📊 Stats</strong><div class="dashboard-stats"><div>👤 Total Users: <strong id="statUsers">—</strong></div><div>📝 Total Articles: <strong id="statArticles">—</strong></div><div>📅 New Articles Today: <strong id="statNewArticles">—</strong></div><div>🆕 New Users Today: <strong id="statNewUsers">—</strong></div><div>Active Users: <strong id="statActive">—</strong></div></div></li>
+<li onclick="go('earnings.html')">💰 Earnings</li><li onclick="go('Write.html')">✍️ Write New</li><li onclick="go('edit-articles.html')">📝 Edit Articles</li><li onclick="go('my-articles.html')">📄 My Articles</li><li onclick="go('favorites.html')">❤️ My Favorites</li><li onclick="go('history.html')">📚 Reading History</li><li onclick="go('activity.html')">🕘 Recent Activities</li><li onclick="go('notifications-center.html')">🔔 Notifications Center</li>
+</ul>
+</li>
+<li id="adminPanel" style="display:none">
+<div class="row" onclick="toggleMenu(this)"><div style="display:flex;gap:8px;align-items:center"><strong data-i18n="admin_panel">🛠️ Admin Panel</strong><span class="small-muted" data-i18n="manage">Manage</span></div><div class="badge">Go</div></div>
+<ul class="submenu"><li onclick="go('admin-dashboard.html')">📊 Dashboard Overview</li><li onclick="go('admin-articles.html')">📝 Manage Articles</li><li onclick="go('admin-users.html')">👥 Manage Users</li><li onclick="go('admin-categories.html')">📂 Manage Categories</li><li onclick="go('admin-comments.html')">💬 Moderate Comments</li><li onclick="go('admin-settings.html')">⚙️ Site Settings</li><li onclick="go('admin-ads.html')">📢 Ads Management</li></ul>
+</li>
+<li>
+<div class="row" onclick="toggleMenu(this)"><div style="display:flex;gap:8px;align-items:center"><strong data-i18n="language">🌐 Language</strong><span class="small-muted" data-i18n="choose_lang">Choose language</span></div><div class="small-muted" id="currentLangLabel">BN</div></div>
+<ul class="submenu" id="langList">
+<li data-lang="en" onclick="setLang('en')">🇬🇧 English</li>
+<li data-lang="bn" onclick="setLang('bn')">🇧🇩 বাংলা</li>
+<li data-lang="ar" onclick="setLang('ar')">🇸🇦 العربية</li>
+<li data-lang="hi" onclick="setLang('hi')">🇮🇳 हिन्दी</li>
+<li data-lang="ur" onclick="setLang('ur')">🇵🇰 اردو</li>
+<li data-lang="es" onclick="setLang('es')">🇪🇸 Español</li>
+<li data-lang="fr" onclick="setLang('fr')">🇫🇷 Français</li>
+<li data-lang="tr" onclick="setLang('tr')">🇹🇷 Türkçe</li>
+<li data-lang="de" onclick="setLang('de')">🇩🇪 Deutsch</li>
+<li data-lang="id" onclick="setLang('id')">🇮🇩 Indonesia</li>
+</ul>
+</li>
+<li>
+<div class="row" onclick="toggleMenu(this)"><div style="display:flex;gap:8px;align-items:center"><strong data-i18n="theme">🎨 Theme / Appearance</strong><span class="small-muted" data-i18n="look_feel">Look & feel</span></div><div class="theme-control" onclick="event.stopPropagation()"><span class="theme-label light" data-i18n="light">Light</span><button id="themeSwitch" class="theme-switch" type="button" onclick="toggleTheme()"></button><span class="theme-label dark" data-i18n="dark">Dark</span></div></div>
+<ul class="submenu"><li><div class="theme-info" data-i18n="theme_info">💡 Switch চাপলে Light ↔ Dark Mode পরিবর্তন হবে।</div></li></ul>
+</li>
+<li>
+<div class="row" onclick="toggleMenu(this)"><div style="display:flex;gap:8px;align-items:center"><strong data-i18n="notifications">🔔 Notifications</strong><span class="small-muted" data-i18n="what_receive">What to receive</span></div><div class="small-muted" data-i18n="manage">Manage</div></div>
+<ul class="submenu"><li onclick="go('notif-article.html')">📝 Article Updates</li><li onclick="go('notif-comments.html')">💬 Comments & Replies</li><li onclick="go('notif-system.html')">⚙️ System Alerts</li><li onclick="go('notif-follower.html')">👥 Follower Activity</li><li onclick="go('notif-disable.html')" style="color:red">🔕 Disable All</li></ul>
+</li>
+<li>
+<div class="row" onclick="toggleMenu(this)"><div style="display:flex;gap:8px;align-items:center"><strong data-i18n="help">💬 Help & Feedback</strong><span class="small-muted" data-i18n="support">Support</span></div><div class="small-muted" data-i18n="help_small">Help</div></div>
+<ul class="submenu"><li onclick="go('faq.html')">❓ FAQs</li><li onclick="go('report-bug.html')">🐞 Report a Bug</li><li onclick="go('request-feature.html')">💡 Request New Feature</li><li onclick="go('contact-support.html')">📞 Contact Support</li><li onclick="go('feedback.html')">📝 Send Feedback</li></ul>
+</li>
+<li id="adminSystem" style="display:none">
+<div class="row" onclick="toggleMenu(this)"><div style="display:flex;gap:8px;align-items:center"><strong data-i18n="system">⚙️ System</strong><span class="small-muted" data-i18n="maintenance">Maintenance</span></div><div class="small-muted" data-i18n="tools">Tools</div></div>
+<ul class="submenu"><li onclick="go('backup.html')">💾 Data Backup</li><li onclick="go('import-export.html')">📦 Import / Export Settings</li><li onclick="go('clear-cache.html')">🧹 Clear Cache</li><li onclick="go('reset-default.html')">♻️ Reset to Default</li></ul>
+</li>
+<li>
+<div class="row" onclick="toggleMenu(this)"><div style="display:flex;gap:8px;align-items:center"><strong id="authTitle" data-i18n="login">🔐 Login</strong><span class="small-muted" id="authSub" data-i18n="account">Account</span></div><div class="small-muted" id="authRight" data-i18n="signin">Sign in</div></div>
+<ul class="submenu" id="authMenu"><li id="authAction" class="login-item">🔐 Login</li></ul>
+</li>
+</ul>
+</div>
+<script src="theme.js"></script>
+<script>
+const SUPABASE_URL='https://nsjeprihgudhiczefopu.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5zamVwcmloZ3VkaGljemVmb3B1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMTYxOTAsImV4cCI6MjA5ODY5MjE5MH0.mOpduK47q0bjV-dQpkUPiq8xkhspF6eFqLzrGiaArd4';
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+let currentUser=null; let isAdmin=false;
+const T={
+en:{settings_title:"Settings",guest:"Hi, Guest",profile:"👤 Profile",account:"Account",manage:"Manage",dashboard:"📋 Dashboard",stats_small:"Site / User stats",stats:"Stats",admin_panel:"🛠️ Admin Panel",language:"🌐 Language",choose_lang:"Choose language",theme:"🎨 Theme / Appearance",look_feel:"Look & feel",light:"Light",dark:"Dark",theme_info:"💡 Press switch to toggle Light ↔ Dark.",notifications:"🔔 Notifications",what_receive:"What to receive",help:"💬 Help & Feedback",support:"Support",help_small:"Help",system:"⚙️ System",maintenance:"Maintenance",tools:"Tools",login:"🔐 Login",signin:"Sign in"},
+bn:{settings_title:"সেটিংস",guest:"হাই, অতিথি",profile:"👤 প্রোফাইল",account:"অ্যাকাউন্ট",manage:"পরিচালনা",dashboard:"📋 ড্যাশবোর্ড",stats_small:"সাইট / ইউজার পরিসংখ্যান",stats:"পরিসংখ্যান",admin_panel:"🛠️ অ্যাডমিন প্যানেল",language:"🌐 ভাষা",choose_lang:"ভাষা বেছে নিন",theme:"🎨 থিম",look_feel:"লুক & ফিল",light:"লাইট",dark:"ডার্ক",theme_info:"💡 সুইচ চাপলে লাইট ↔ ডার্ক হবে।",notifications:"🔔 নোটিফিকেশন",what_receive:"কি পাবেন",help:"💬 সাহায্য",support:"সাপোর্ট",help_small:"সহায়তা",system:"⚙️ সিস্টেম",maintenance:"রক্ষণাবেক্ষণ",tools:"টুলস",login:"🔐 লগইন",signin:"সাইন ইন"},
+ar:{settings_title:"الإعدادات",guest:"مرحباً، ضيف",profile:"👤 الملف الشخصي",account:"الحساب",manage:"إدارة",dashboard:"📋 لوحة التحكم",stats_small:"الإحصائيات",stats:"إحصائيات",admin_panel:"🛠️ لوحة الإدارة",language:"🌐 اللغة",choose_lang:"اختر اللغة",theme:"🎨 المظهر",look_feel:"المظهر",light:"فاتح",dark:"داكن",theme_info:"💡 اضغط للتبديل.",notifications:"🔔 الإشعارات",what_receive:"ماذا تستقبل",help:"💬 المساعدة",support:"الدعم",help_small:"مساعدة",system:"⚙️ النظام",maintenance:"صيانة",tools:"أدوات",login:"🔐 دخول",signin:"تسجيل دخول"},
+hi:{settings_title:"सेटिंग्स",guest:"हाय, अतिथि",profile:"👤 प्रोफाइल",account:"खाता",manage:"मैनेज",dashboard:"📋 डैशबोर्ड",stats_small:"आंकड़े",stats:"आंकड़े",admin_panel:"🛠️ एडमिन पैनल",language:"🌐 भाषा",choose_lang:"भाषा चुनें",theme:"🎨 थीम",look_feel:"लुक & फील",light:"लाइट",dark:"डार्क",theme_info:"💡 लाइट/डार्क बदलें।",notifications:"🔔 नोटिफिकेशन",what_receive:"क्या पाएं",help:"💬 सहायता",support:"सपोर्ट",help_small:"मदद",system:"⚙️ सिस्टम",maintenance:"रखरखाव",tools:"टूल्स",login:"🔐 लॉगिन",signin:"साइन इन"},
+ur:{settings_title:"ترتیبات",guest:"ہائے، مہمان",profile:"👤 پروفائل",account:"اکاؤنٹ",manage:"منظم",dashboard:"📋 ڈیش بورڈ",stats_small:"اعداد",stats:"اعداد",admin_panel:"🛠️ ایڈمن پینل",language:"🌐 زبان",choose_lang:"زبان منتخب کریں",theme:"🎨 تھیم",look_feel:"شکل",light:"لائٹ",dark:"ڈارک",theme_info:"💡 لائٹ/ڈارک بدلیں۔",notifications:"🔔 اطلاعات",what_receive:"کیا ملے",help:"💬 مدد",support:"سپورٹ",help_small:"مدد",system:"⚙️ سسٹم",maintenance:"دیکھ بھال",tools:"ٹولز",login:"🔐 لاگ ان",signin:"سائن ان"},
+es:{settings_title:"Ajustes",guest:"Hola, Invitado",profile:"👤 Perfil",account:"Cuenta",manage:"Gestionar",dashboard:"📋 Panel",stats_small:"Estadísticas",stats:"Estadísticas",admin_panel:"🛠️ Admin",language:"🌐 Idioma",choose_lang:"Elige idioma",theme:"🎨 Tema",look_feel:"Apariencia",light:"Claro",dark:"Oscuro",theme_info:"💡 Cambia claro/oscuro.",notifications:"🔔 Notificaciones",what_receive:"Qué recibir",help:"💬 Ayuda",support:"Soporte",help_small:"Ayuda",system:"⚙️ Sistema",maintenance:"Mantenimiento",tools:"Herramientas",login:"🔐 Entrar",signin:"Entrar"},
+fr:{settings_title:"Paramètres",guest:"Salut, Invité",profile:"👤 Profil",account:"Compte",manage:"Gérer",dashboard:"📋 Tableau",stats_small:"Stats",stats:"Stats",admin_panel:"🛠️ Admin",language:"🌐 Langue",choose_lang:"Choisir langue",theme:"🎨 Thème",look_feel:"Apparence",light:"Clair",dark:"Sombre",theme_info:"💡 Basculer clair/sombre.",notifications:"🔔 Notifications",what_receive:"Que recevoir",help:"💬 Aide",support:"Support",help_small:"Aide",system:"⚙️ Système",maintenance:"Maintenance",tools:"Outils",login:"🔐 Connexion",signin:"Se connecter"},
+tr:{settings_title:"Ayarlar",guest:"Merhaba, Misafir",profile:"👤 Profil",account:"Hesap",manage:"Yönet",dashboard:"📋 Panel",stats_small:"İstatistik",stats:"İstatistik",admin_panel:"🛠️ Admin Panel",language:"🌐 Dil",choose_lang:"Dil seç",theme:"🎨 Tema",look_feel:"Görünüm",light:"Açık",dark:"Koyu",theme_info:"💡 Açık/koyu değiştir.",notifications:"🔔 Bildirimler",what_receive:"Ne almalı",help:"💬 Yardım",support:"Destek",help_small:"Yardım",system:"⚙️ Sistem",maintenance:"Bakım",tools:"Araçlar",login:"🔐 Giriş",signin:"Giriş yap"},
+de:{settings_title:"Einstellungen",guest:"Hallo, Gast",profile:"👤 Profil",account:"Konto",manage:"Verwalten",dashboard:"📋 Dashboard",stats_small:"Statistiken",stats:"Statistiken",admin_panel:"🛠️ Admin",language:"🌐 Sprache",choose_lang:"Sprache wählen",theme:"🎨 Thema",look_feel:"Aussehen",light:"Hell",dark:"Dunkel",theme_info:"💡 Hell/dunkel wechseln.",notifications:"🔔 Benachrichtigungen",what_receive:"Was erhalten",help:"💬 Hilfe",support:"Support",help_small:"Hilfe",system:"⚙️ System",maintenance:"Wartung",tools:"Tools",login:"🔐 Anmelden",signin:"Einloggen"},
+id:{settings_title:"Pengaturan",guest:"Hai, Tamu",profile:"👤 Profil",account:"Akun",manage:"Kelola",dashboard:"📋 Dasbor",stats_small:"Statistik",stats:"Statistik",admin_panel:"🛠️ Admin",language:"🌐 Bahasa",choose_lang:"Pilih bahasa",theme:"🎨 Tema",look_feel:"Tampilan",light:"Terang",dark:"Gelap",theme_info:"💡 Ganti terang/gelap.",notifications:"🔔 Notifikasi",what_receive:"Apa diterima",help:"💬 Bantuan",support:"Dukungan",help_small:"Bantuan",system:"⚙️ Sistem",maintenance:"Pemeliharaan",tools:"Alat",login:"🔐 Masuk",signin:"Masuk"}
+};
+let curLang = localStorage.getItem('sk_lang') || localStorage.getItem('lang') || 'bn';
+function setLang(lang){
+  curLang=lang;
+  localStorage.setItem('sk_lang',lang);
+  localStorage.setItem('lang',lang);
+  localStorage.setItem('sk_language',lang);
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    let k=el.getAttribute('data-i18n');
+    if(T[lang] && T[lang][k]) el.innerText=T[lang][k];
+  });
+  const labelEl=document.getElementById('currentLangLabel');
+  if(labelEl) labelEl.innerText=lang.toUpperCase();
+  document.querySelectorAll('#langList li').forEach(li=>{
+    if(li.dataset.lang===lang){
+      li.style.background='#c8102e';
+      li.style.color='#fff';
+      li.style.borderRadius='6px';
+      li.style.fontWeight='700';
+    } else {
+      li.style.background='';
+      li.style.color='';
+      li.style.fontWeight='';
+    }
+  });
+  try{
+    window.top.postMessage({type:'skLangChanged', lang:lang},'*');
+    window.top.postMessage({type:'language', lang:lang},'*');
+    window.parent.postMessage({type:'skLangChanged', lang:lang},'*');
+    window.parent.postMessage({type:'language', lang:lang},'*');
+  }catch(e){}
+  try{
+    if(window.BroadcastChannel){
+      const ch=new BroadcastChannel('sk_news_live_sync');
+      ch.postMessage({type:'language',lang:lang});
+      ch.postMessage({type:'skLangChanged',lang:lang});
+      setTimeout(()=>ch.close(),200);
+    }
+  }catch(e){}
+}
+function toggleMenu(el){ const submenu=el.nextElementSibling; if(!submenu)return; document.querySelectorAll('.submenu.show').forEach(x=>{ if(x!==submenu)x.classList.remove('show'); }); submenu.classList.toggle('show'); }
+function getParentPage(){ try{ const topUrl=window.top.location.href; const url=new URL(topUrl); const page=url.pathname.split('/').pop().toLowerCase(); if(page==='settings.html'||page==='login.html')return'index.html'; return url.href; }catch(e){ return'index.html'; } }
+function saveSettingsReturnPage(){ try{ const page=getParentPage(); if(page&&!page.includes('settings.html')&&!page.includes('login.html')){ sessionStorage.setItem('sk_settings_return_page',page); } }catch(e){} }
+function openLoginFromSettings(){ saveSettingsReturnPage(); window.top.location.href='login.html'; }
+function go(url){ window.top.location.assign(url); }
+function closeSettings(){ try{ window.top.postMessage({type:'closeSettings'},'*'); const topDoc=window.top.document; const p=topDoc.getElementById('settingsPopup'); if(p) p.remove(); const s=topDoc.getElementById('settingsPopupStyle'); if(s) s.remove(); }catch(e){} }
+function setVisible(id,visible){ const el=document.getElementById(id); if(el)el.style.display=visible?'':'none'; }
+function setAuthUI(loggedIn,user){
+const title=document.getElementById('authTitle'); const sub=document.getElementById('authSub'); const right=document.getElementById('authRight'); const action=document.getElementById('authAction');
+if(loggedIn&&user){ currentUser=user; const name=(user.email||'Guest').split('@')[0]; document.getElementById('userNameLabel').textContent='Hi, '+name; document.getElementById('userNameLabel').removeAttribute('data-i18n'); title.textContent='🔓 Logout'; sub.textContent='Exit'; right.textContent='Sign out'; action.className='logout-item'; action.textContent='🚪 Confirm Logout'; action.onclick=handleLogout; }
+else{ currentUser=null; let t=T[curLang]||T['bn']; document.getElementById('userNameLabel').textContent=t.guest; document.getElementById('userNameLabel').setAttribute('data-i18n','guest'); title.textContent=t.login; sub.textContent=t.account; right.textContent=t.signin; action.className='login-item'; action.textContent=t.login; action.onclick=openLoginFromSettings; }
+}
+function resetPermissions(){ setVisible('userProfileSection',false); setVisible('userDashboardSection',false); setVisible('adminPanel',false); setVisible('adminSystem',false); isAdmin=false; }
+async function checkAdminRole(user){ resetPermissions(); if(!user)return false; setVisible('userProfileSection',true); setVisible('userDashboardSection',true); try{ const{data:profile,error}=await supabaseClient.from('profiles').select('id,email,role').eq('id',user.id).maybeSingle(); if(error) return false; if(profile&&profile.role==='admin'){ isAdmin=true; setVisible('adminPanel',true); setVisible('adminSystem',true); return true; } }catch(error){} return false; }
+async function loadUser(){ try{ const{data,error}=await supabaseClient.auth.getUser(); if(error)throw error; if(data?.user){ setAuthUI(true,data.user); await checkAdminRole(data.user); }else{ setAuthUI(false,null); resetPermissions(); } }catch(error){ setAuthUI(false,null); resetPermissions(); } }
+async function handleLogout(){ if(!currentUser){ openLoginFromSettings(); return; } const ok=confirm('আপনি কি Logout করতে চান?\n\nLogout করলে এই Account-এর Login Session শেষ হবে।'); if(!ok)return; try{ const{error}=await supabaseClient.auth.signOut(); if(error)throw error; currentUser=null; isAdmin=false; setAuthUI(false,null); resetPermissions(); closeSettings(); }catch(error){ alert('Logout করতে সমস্যা হয়েছে.\n\n'+(error.message||'Unknown error')); } }
+async function loadStats(){ const today=new Date(); today.setHours(0,0,0,0); const tomorrow=new Date(today); tomorrow.setDate(tomorrow.getDate()+1); const todayISO=today.toISOString(); const tomorrowISO=tomorrow.toISOString(); try{ const{count}=await supabaseClient.from('profiles').select('*',{count:'exact',head:true}); if(count!==null)document.getElementById('statUsers').textContent=count; }catch(e){} try{ const{count}=await supabaseClient.from('articles').select('*',{count:'exact',head:true}); if(count!==null)document.getElementById('statArticles').textContent=count; }catch(e){} try{ const{count}=await supabaseClient.from('articles').select('*',{count:'exact',head:true}).gte('created_at',todayISO).lt('created_at',tomorrowISO); if(count!==null)document.getElementById('statNewArticles').textContent=count; }catch(e){} try{ const{count}=await supabaseClient.from('profiles').select('*',{count:'exact',head:true}).gte('created_at',todayISO).lt('created_at',tomorrowISO); if(count!==null)document.getElementById('statNewUsers').textContent=count; }catch(e){} try{ const{count}=await supabaseClient.from('profiles').select('*',{count:'exact',head:true}).gte('last_seen_at',new Date(Date.now()-30*60*1000).toISOString()); if(count!==null)document.getElementById('statActive').textContent=count; }catch(e){ document.getElementById('statActive').textContent='—'; } }
+function getTheme(){ return typeof window.getSKTheme==='function'?window.getSKTheme():(localStorage.getItem('sk_theme')||localStorage.getItem('sk_site_theme')||'light'); }
+function updateThemeSwitch(theme){ const switchBtn=document.getElementById('themeSwitch'); if(switchBtn) switchBtn.classList.toggle('dark',theme==='dark'); }
+function toggleTheme(){ const next=getTheme()==='dark'?'light':'dark'; if(typeof window.setSKTheme==='function'){ window.setSKTheme(next); }else{ localStorage.setItem('sk_theme',next); localStorage.setItem('sk_site_theme',next); document.documentElement.classList.toggle('dark-mode',next==='dark'); document.body.classList.toggle('dark',next==='dark'); } updateThemeSwitch(next); try{ window.top.postMessage({type:'skThemeChanged',theme:next},'*'); if(window.BroadcastChannel){ const ch=new BroadcastChannel('sk_news_live_sync'); ch.postMessage({type:'theme',theme:next}); ch.close(); } }catch(e){} }
+function loadTheme(){ const theme=getTheme(); updateThemeSwitch(theme); }
+window.addEventListener('storage',function(e){ if(e.key==='sk_theme'||e.key==='sk_site_theme'){ updateThemeSwitch(e.newValue==='dark'?'dark':'light'); } if(e.key==='sk_lang'||e.key==='lang'||e.key==='sk_language'){ curLang=e.newValue||'bn'; setLang(curLang); } });
+window.addEventListener('message',function(e){ if(e.data&&e.data.type==='skThemeChanged'){ updateThemeSwitch(e.data.theme==='dark'?'dark':'light'); } if(e.data&&(e.data.type==='skLangChanged'||e.data.type==='language')&&e.data.lang){ curLang=e.data.lang; setLang(curLang); } });
+supabaseClient.auth.onAuthStateChange(async(event,session)=>{ if(event==='SIGNED_IN'&&session){ setAuthUI(true,session.user); await checkAdminRole(session.user); loadStats(); } if(event==='SIGNED_OUT'){ setAuthUI(false,null); resetPermissions(); } });
+saveSettingsReturnPage(); loadTheme(); loadUser(); loadStats(); setLang(curLang);
+</script>
+</body>
+</html>
