@@ -1,0 +1,142 @@
+<!DOCTYPE html><html lang="bn"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+html,body{margin:0;padding:0;background:transparent!important;height:auto;font-family:'Hind Siliguri',sans-serif;overflow-x:hidden}
+.footerWrapper{background:#1e3a8a;width:100%;position:relative;display:block;transition:background.3s}
+.footerWrapper.dark{background:#020617!important}
+.footerGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:1200px;margin:0 auto;padding:16px 3% 12px;color:#e0f2fe}
+footer h4{color:#fff;margin:0 0 6px;font-size:11px;font-weight:700}
+footer p,footer a{font-size:9.5px;line-height:1.6;color:#cbd5e1;text-decoration:none;display:block;margin-bottom:3px}
+.copyright{text-align:center;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.2);font-size:8px;grid-column:1/5;color:#bfdbfe}
+@media(max-width:767px){.footerGrid{grid-template-columns:repeat(2,1fr)}}
+</style></head><body>
+<div class="footerWrapper" id="footerMain"><footer><div class="footerGrid">
+<div><h4 id="f1">SK News Live</h4><p id="f2">বাংলাদেশের বিশ্বস্ত ২৪ ঘণ্টার নিউজ পোর্টাল। সত্য ও নির্ভুল সংবাদ সবার আগে।</p></div>
+<div><h4 id="f3">ক্যাটাগরি</h4><a href="#" id="f4">জাতীয়</a><a href="#" id="f5">আন্তর্জাতিক</a><a href="#" id="f9">খেলা</a></div>
+<div><h4 id="f6">অন্যান্য</h4><a href="#" id="f7">আমাদের সম্পর্কে</a><a href="#" id="f8">যোগাযোগ</a><a href="#" id="f10">প্রাইভেসি</a></div>
+<div><h4>Social</h4><a href="https://www.facebook.com/sknewslivebd" target="_blank">Facebook</a><a href="#" id="f11">YouTube</a></div>
+<div class="copyright">© 2026 SK News Live | All Rights Reserved</div>
+</div></footer></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+try{
+let pd, pw; try{pd=window.parent.document; pw=window.parent;}catch(e){pd=document; pw=window;}
+['skFloatFinal','skPopFinal','skStyleFinal'].forEach(id=>{try{let e=pd.getElementById(id); if(e) e.remove();}catch(e){}});
+const sb=supabase.createClient('https://nsjeprihgudhiczefopu.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5zamVwcmloZ3VkaGljemVmb3B1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMTYxOTAsImV4cCI6MjA5ODY5MjE5MH0.mOpduK47q0bjV-dQpkUPiq8xkhspF6eFqLzrGiaArd4',{auth:{storage:{getItem:k=>{try{return pw.localStorage.getItem(k)||localStorage.getItem(k);}catch(e){return localStorage.getItem(k);}},setItem:(k,v)=>{try{pw.localStorage.setItem(k,v);}catch(e){}try{localStorage.setItem(k,v);}catch(e){}},removeItem:k=>{try{pw.localStorage.removeItem(k);}catch(e){}try{localStorage.removeItem(k);}catch(e){}}},persistSession:true}});
+
+// ===== CLOUDINARY CONFIG =====
+const CLOUD_NAME = "YOUR_CLOUD_NAME";
+const UPLOAD_PRESET = "sk_chat";
+async function uploadToCloudinary(file){
+  let fd=new FormData(); fd.append('file', file); fd.append('upload_preset', UPLOAD_PRESET);
+  let res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {method:'POST', body:fd});
+  let data=await res.json(); if(!data.secure_url) throw new Error('Upload failed'); return data.secure_url;
+}
+
+// ===== 10 LANGUAGE - SETTINGS থেকে আসবে =====
+const LANG={
+ en:{site:"SK News Live",desc:"Bangladesh's trusted 24-hour news portal. True and accurate news first.",cat:"Category",nat:"National",inter:"International",sports:"Sports",oth:"Others",about:"About Us",contact:"Contact",privacy:"Privacy",yt:"YouTube",chat:"💬 SK Chat",home:"🏠 Home",help:"🆘 Help",users:"💬 Users",search:"Search name or email...",write:"Write message...",online:"Online",offline:"Offline",login:"Please Login",loginD:"You need to login to see chat",noUser:"No logged in users",helpline:"Helpline",wa:"Whatsapp",tg:"Telegram",ms:"Messenger",fb:"Facebook",call:"Call Us",mail:"Email",support:"We are 24/7 here for you"},
+ bn:{site:"SK News Live",desc:"বাংলাদেশের বিশ্বস্ত ২৪ ঘণ্টার নিউজ পোর্টাল। সত্য ও নির্ভুল সংবাদ সবার আগে।",cat:"ক্যাটাগরি",nat:"জাতীয়",inter:"আন্তর্জাতিক",sports:"খেলা",oth:"অন্যান্য",about:"আমাদের সম্পর্কে",contact:"যোগাযোগ",privacy:"প্রাইভেসি",yt:"ইউটিউব",chat:"💬 SK চ্যাট",home:"🏠 হোম",help:"🆘 হেল্প",users:"💬 ইউজার",search:"নাম বা ইমেইল সার্চ...",write:"মেসেজ লিখুন...",online:"অনলাইন",offline:"অফলাইন",login:"লগইন করুন",loginD:"চ্যাট দেখতে লগইন করতে হবে",noUser:"কোনো লগইন ইউজার নেই",helpline:"হেল্পলাইন",wa:"হোয়াটসঅ্যাপ",tg:"টেলিগ্রাম",ms:"মেসেঞ্জার",fb:"ফেসবুক",call:"কল করুন",mail:"ইমেইল",support:"আমরা ২৪/৭ আপনার সেবায় আছি"},
+ ar:{site:"SK News Live",desc:"بوابة الأخبار الموثوقة في بنغلاديش.",cat:"الفئة",nat:"وطني",inter:"دولي",sports:"رياضة",oth:"أخرى",about:"من نحن",contact:"اتصل بنا",privacy:"خصوصية",yt:"يوتيوب",chat:"💬 دردشة SK",home:"🏠 الرئيسية",help:"🆘 مساعدة",users:"💬 المستخدمون",search:"البحث بالاسم...",write:"اكتب رسالة...",online:"متصل",offline:"غير متصل",login:"الرجاء تسجيل الدخول",loginD:"تحتاج لتسجيل الدخول",noUser:"لا يوجد مستخدمون",helpline:"خط المساعدة",wa:"واتساب",tg:"تيليجرام",ms:"ماسنجر",fb:"فيسبوك",call:"اتصل بنا",mail:"البريد",support:"نحن هنا 24/7"},
+ hi:{site:"SK News Live",desc:"बांग्लादेश का विश्वसनीय 24 घंटे न्यूज़ पोर्टल।",cat:"श्रेणी",nat:"राष्ट्रीय",inter:"अंतरराष्ट्रीय",sports:"खेल",oth:"अन्य",about:"हमारे बारे में",contact:"संपर्क",privacy:"प्राइवेसी",yt:"यूट्यूब",chat:"💬 SK चैट",home:"🏠 होम",help:"🆘 मदद",users:"💬 यूजर्स",search:"नाम खोजें...",write:"संदेश लिखें...",online:"ऑनलाइन",offline:"ऑफलाइन",login:"लॉगिन करें",loginD:"चैट देखने के लिए लॉगिन करें",noUser:"कोई यूजर नहीं",helpline:"हेल्पलाइन",wa:"व्हाट्सएप",tg:"टेलीग्राम",ms:"मैसेंजर",fb:"फेसबुक",call:"कॉल करें",mail:"ईमेल",support:"हम 24/7 आपके लिए हैं"},
+ ur:{site:"SK News Live",desc:"بنگلہ دیش کا قابل اعتماد نیوز پورٹل۔",cat:"زمرہ",nat:"قومی",inter:"بین الاقوامی",sports:"کھیل",oth:"دیگر",about:"ہمارے بارے میں",contact:"رابطہ",privacy:"پرائیویسی",yt:"یوٹیوب",chat:"💬 SK چیٹ",home:"🏠 ہوم",help:"🆘 مدد",users:"💬 صارفین",search:"نام تلاش کریں...",write:"پیغام لکھیں...",online:"آن لائن",offline:"آف لائن",login:"لاگ ان کریں",loginD:"چیٹ دیکھنے کے لیے لاگ ان کریں",noUser:"کوئی صارف نہیں",helpline:"ہیلپ لائن",wa:"واٹس ایپ",tg:"ٹیلی گرام",ms:"میسنجر",fb:"فیس بک",call:"کال کریں",mail:"ای میل",support:"ہم 24/7 حاضر ہیں"},
+ es:{site:"SK News Live",desc:"El portal de noticias confiable 24h de Bangladesh.",cat:"Categoría",nat:"Nacional",inter:"Internacional",sports:"Deportes",oth:"Otros",about:"Sobre nosotros",contact:"Contacto",privacy:"Privacidad",yt:"YouTube",chat:"💬 Chat SK",home:"🏠 Inicio",help:"🆘 Ayuda",users:"💬 Usuarios",search:"Buscar nombre...",write:"Escribe mensaje...",online:"En línea",offline:"Desconectado",login:"Inicia Sesión",loginD:"Necesitas iniciar sesión",noUser:"No hay usuarios",helpline:"Ayuda",wa:"Whatsapp",tg:"Telegram",ms:"Messenger",fb:"Facebook",call:"Llámanos",mail:"Correo",support:"Estamos 24/7 para ti"},
+ fr:{site:"SK News Live",desc:"Le portail d'actualités fiable 24h/24 du Bangladesh.",cat:"Catégorie",nat:"National",inter:"International",sports:"Sports",oth:"Autres",about:"À propos",contact:"Contact",privacy:"Confidentialité",yt:"YouTube",chat:"💬 Chat SK",home:"🏠 Accueil",help:"🆘 Aide",users:"💬 Utilisateurs",search:"Rechercher...",write:"Écrire...",online:"En ligne",offline:"Hors ligne",login:"Connexion",loginD:"Connectez-vous pour voir le chat",noUser:"Aucun utilisateur",helpline:"Assistance",wa:"Whatsapp",tg:"Telegram",ms:"Messenger",fb:"Facebook",call:"Appelez",mail:"Email",support:"Nous sommes là 24/7"},
+ tr:{site:"SK News Live",desc:"Bangladeş'in güvenilir 24 saat haber portalı.",cat:"Kategori",nat:"Ulusal",inter:"Uluslararası",sports:"Spor",oth:"Diğer",about:"Hakkımızda",contact:"İletişim",privacy:"Gizlilik",yt:"YouTube",chat:"💬 SK Sohbet",home:"🏠 Ana Sayfa",help:"🆘 Yardım",users:"💬 Kullanıcılar",search:"İsim ara...",write:"Mesaj yaz...",online:"Çevrimiçi",offline:"Çevrimdışı",login:"Giriş Yap",loginD:"Sohbeti görmek için giriş yapın",noUser:"Kullanıcı yok",helpline:"Yardım Hattı",wa:"Whatsapp",tg:"Telegram",ms:"Messenger",fb:"Facebook",call:"Ara",mail:"E-posta",support:"7/24 buradayız"},
+ de:{site:"SK News Live",desc:"Bangladeschs vertrauenswürdiges 24-Stunden-Portal.",cat:"Kategorie",nat:"National",inter:"International",sports:"Sport",oth:"Andere",about:"Über uns",contact:"Kontakt",privacy:"Datenschutz",yt:"YouTube",chat:"💬 SK Chat",home:"🏠 Start",help:"🆘 Hilfe",users:"💬 Benutzer",search:"Suchen...",write:"Schreiben...",online:"Online",offline:"Offline",login:"Anmelden",loginD:"Anmelden um Chat zu sehen",noUser:"Keine Benutzer",helpline:"Hotline",wa:"Whatsapp",tg:"Telegram",ms:"Messenger",fb:"Facebook",call:"Anrufen",mail:"E-Mail",support:"Wir sind 24/7 für Sie da"},
+ id:{site:"SK News Live",desc:"Portal berita terpercaya 24 jam Bangladesh.",cat:"Kategori",nat:"Nasional",inter:"Internasional",sports:"Olahraga",oth:"Lainnya",about:"Tentang Kami",contact:"Kontak",privacy:"Privasi",yt:"YouTube",chat:"💬 Chat SK",home:"🏠 Beranda",help:"🆘 Bantuan",users:"💬 Pengguna",search:"Cari nama...",write:"Tulis pesan...",online:"Online",offline:"Offline",login:"Silakan Login",loginD:"Anda perlu login untuk melihat chat",noUser:"Tidak ada pengguna",helpline:"Bantuan",wa:"Whatsapp",tg:"Telegram",ms:"Messenger",fb:"Facebook",call:"Hubungi",mail:"Email",support:"Kami ada 24/7 untuk Anda"}
+};
+function getLang(){try{let l=pw.localStorage.getItem('sk_lang')||localStorage.getItem('sk_lang')||'en'; if(LANG[l]) return l; if(l.includes('bn')) return 'bn'; return 'en';}catch(e){return 'en';}}
+function getTheme(){try{return pw.localStorage.getItem('sk_theme')||localStorage.getItem('sk_theme')||'light';}catch(e){return 'light';}}
+function t(k){let lg=getLang(); return (LANG[lg]&&LANG[lg][k])||LANG.en[k]||k;}
+function applyAll(){
+  let th=getTheme();
+  try{
+    document.getElementById('f1').textContent=t('site'); document.getElementById('f2').textContent=t('desc');
+    document.getElementById('f3').textContent=t('cat'); document.getElementById('f4').textContent=t('nat');
+    document.getElementById('f5').textContent=t('inter'); document.getElementById('f9').textContent=t('sports');
+    document.getElementById('f6').textContent=t('oth'); document.getElementById('f7').textContent=t('about');
+    document.getElementById('f8').textContent=t('contact'); document.getElementById('f10').textContent=t('privacy');
+    document.getElementById('f11').textContent=t('yt');
+  }catch(e){}
+  let fw=document.getElementById('footerMain'); let pop=pd.getElementById('skPopFinal');
+  if(fw){ if(th==='dark') fw.classList.add('dark'); else fw.classList.remove('dark'); }
+  if(pop){ if(th==='dark') pop.classList.add('dark'); else pop.classList.remove('dark'); }
+  try{
+    pd.getElementById('skChatTitle').textContent=t('chat'); pd.getElementById('skSearch').placeholder=t('search');
+    pd.getElementById('skInp').placeholder=t('write'); pd.getElementById('tHome').textContent=t('home');
+    pd.getElementById('tHelp').textContent=t('help'); pd.getElementById('tMsg').textContent=t('users');
+  }catch(e){}
+}
+window.addEventListener('message', (e)=>{
+  if(!e.data) return;
+  if(e.data.type==='THEME_CHANGE'){ try{localStorage.setItem('sk_theme', e.data.theme); pw.localStorage.setItem('sk_theme', e.data.theme);}catch(err){} applyAll(); }
+  if(e.data.type==='LANG_CHANGE'){ try{localStorage.setItem('sk_lang', e.data.lang); pw.localStorage.setItem('sk_lang', e.data.lang);}catch(err){} applyAll(); loadChat(); }
+});
+setInterval(applyAll, 1500); applyAll();
+
+let st=pd.createElement('style');st.id='skStyleFinal';
+st.innerHTML=`#skFloatFinal{position:fixed;bottom:16px;right:12px;width:56px;height:56px;background:#2563EB;border-radius:50%;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;cursor:pointer;z-index:2147483647;box-shadow:0 4px 12px rgba(0,0,0,.4)}#skPopFinal{display:none;position:fixed;bottom:80px;right:12px;width:340px;height:480px;min-width:300px;min-height:380px;max-width:92vw;max-height:78vh;background:#fff;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.45);z-index:2147483647;flex-direction:column;overflow:hidden;border:1px solid #e2e8f0}#skPopFinal.show{display:flex}#skPopFinal.dark{background:#0f172a!important;border-color:#334155!important}#skPopFinal.dark #skMsgs{background:#1e293b!important;color:#e2e8f0!important}#skPopFinal.dark #skHelpW{background:#0f172a!important;color:#e2e8f0!important}#skPopFinal.dark #skSearchW,#skPopFinal.dark #skBot{background:#1e293b!important}#skMsgs{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:10px;background:#f8fafc;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}.skMsgRow{display:flex;gap:8px}.skMsgRow.me{flex-direction:row-reverse}.skAvatar{width:34px;height:34px;border-radius:50%;background:#1e3a8a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;overflow:hidden}.skAvatar img{width:100%;height:100%;object-fit:cover}.skBubbleWrap{max-width:72%;display:flex;flex-direction:column}.skName{font-size:7px;color:#64748b;font-weight:600;margin-bottom:2px}.skBubble{background:#fff;padding:7px 10px;border-radius:12px;font-size:10.5px;box-shadow:0 1px 2px rgba(0,0,0,.1);word-break:break-word}.skBubble.me{background:#dcf8c6}.skBubble img{max-width:140px;border-radius:8px;margin-top:4px;cursor:pointer;display:block}.skTab{flex:1;padding:9px 2px;text-align:center;font-size:9.5px;cursor:pointer;background:#f1f5f9;border:0}.skTab.active{background:#fff;border-top:2px solid #2563EB;color:#2563EB;font-weight:700}.skU{padding:8px 9px;background:#fff;border-radius:10px;border:1px solid #eee;display:flex;align-items:center;gap:10px;font-size:10px;margin-bottom:6px}#skResizeHandle{position:absolute;top:0;left:0;width:24px;height:24px;cursor:nwse-resize;display:flex;align-items:center;justify-content:center;font-size:14px;color:#64748b;background:rgba(0,0,0,.06);border-bottom-right-radius:10px;z-index:20;user-select:none}`;
+pd.head.appendChild(st);
+let btn=pd.createElement('div');btn.id='skFloatFinal';btn.innerHTML='💬';pd.body.appendChild(btn);
+let pop=pd.createElement('div');pop.id='skPopFinal';
+pop.innerHTML=`<div id="skResizeHandle">↔️</div><div style="background:#2563EB;color:#fff;padding:10px 12px;display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:12px" id="skChatTitle">${t('chat')}</b><div id="onlineCountTop" style="font-size:8px;opacity:.9">• 0 ${t('online')}</div></div><span id="skCloseF" style="cursor:pointer;font-size:16px;background:rgba(255,255,255,.2);width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:6px">✕</span></div><div id="skMsgs"></div><div id="skSearchW" style="display:none;padding:6px;background:#fff;border-top:1px solid #eee"><input id="skSearch" placeholder="${t('search')}" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:8px;font-size:9px;outline:none"></div><div id="skHelpW" style="display:none;background:#fff;overflow-y:auto;flex:1;overscroll-behavior:contain"></div><div style="display:flex;border-top:1px solid #e2e8f0;height:36px"><div class="skTab active" id="tHome">${t('home')}</div><div class="skTab" id="tHelp">${t('help')}</div><div class="skTab" id="tMsg">${t('users')}</div></div><div id="skBot" style="display:flex;padding:6px;gap:5px;background:#fff;align-items:center;border-top:1px solid #eee"><input type="file" id="skFile" accept="image/*" style="display:none"><button id="skImgBtn" style="background:#f1f5f9;border:1px solid #ddd;width:32px;height:32px;border-radius:50%;cursor:pointer">📷</button><input id="skInp" placeholder="${t('write')}" style="flex:1;padding:7px 11px;border:1px solid #ddd;border-radius:18px;outline:none;font-size:10px"><button id="skSend" style="background:#2563EB;color:#fff;border:0;min-width:32px;height:32px;border-radius:50%">➤</button></div>`;
+pd.body.appendChild(pop);
+
+// RESIZE FIX + SCROLL ISOLATION
+(function(){let h=pd.getElementById('skResizeHandle');let r=false,sx,sy,sw,sh;function start(e){r=true;let p=e.touches?e.touches[0]:e;sx=p.clientX; sy=p.clientY;let rect=pop.getBoundingClientRect();sw=rect.width; sh=rect.height;e.preventDefault();}function move(e){if(!r) return;let p=e.touches?e.touches[0]:e;let dx=sx-p.clientX;let dy=sy-p.clientY;pop.style.width=Math.min(Math.max(sw+dx,300),window.innerWidth*0.92)+'px';pop.style.height=Math.min(Math.max(sh+dy,380),window.innerHeight*0.78)+'px';e.preventDefault();}function end(){r=false;}h.addEventListener('mousedown', start);h.addEventListener('touchstart', start, {passive:false});pd.addEventListener('mousemove', move);pd.addEventListener('touchmove', move, {passive:false});pd.addEventListener('mouseup', end);pd.addEventListener('touchend', end);let msgs=pd.getElementById('skMsgs');let helpW=pd.getElementById('skHelpW');[msgs, helpW].forEach(el=>{if(!el) return; el.addEventListener('wheel', (e)=>{ e.stopPropagation(); }, {passive:true}); el.addEventListener('touchmove', (e)=>{ e.stopPropagation(); }, {passive:false});});})();
+
+async function getUserInfo(){let email=null,name=null,avatar=null;try{const {data:{session}}=await sb.auth.getSession(); if(session?.user?.email){ email=session.user.email; name=session.user.user_metadata?.full_name||session.user.user_metadata?.name||email.split('@')[0]; avatar=session.user.user_metadata?.avatar_url||session.user.user_metadata?.picture; }}catch(e){}try{if(!email) email=pw.localStorage.getItem('sk_user_email')||localStorage.getItem('sk_user_email'); if(!name) name=pw.localStorage.getItem('sk_user_name'); if(!avatar) avatar=pw.localStorage.getItem('sk_avatar');}catch(e){} if(!email) return {email:null, name:null, avatar:''}; if(!name) name=email.split('@')[0]; return {email, name, avatar:avatar||''};}
+const ONLINE_LIMIT_MS=5*60*1000;
+async function heartbeat(){let {email,name,avatar}=await getUserInfo(); if(!email || email.includes('guest_')) return; try{await sb.from('user_presence').upsert({email, display_name:name, avatar_url:avatar, last_seen:new Date().toISOString(), is_online:true},{onConflict:'email'});}catch(e){}}
+setInterval(heartbeat,10000);heartbeat();
+let cur='home';
+async function loadChat(){
+let {email:myEmail}=await getUserInfo(); let box=pd.getElementById('skMsgs'),sW=pd.getElementById('skSearchW'),hW=pd.getElementById('skHelpW');
+if(!myEmail){box.style.display='flex';sW.style.display='none';hW.style.display='none'; box.innerHTML=`<div style="text-align:center;padding:30px 10px"><div style="font-size:30px">🔒</div><div style="font-size:11px;margin-top:8px;font-weight:600">${t('login')}</div><div style="font-size:9px;color:#64748b">${t('loginD')}</div><a href="/login.html" target="_top" style="display:inline-block;margin-top:10px;background:#2563EB;color:#fff;padding:6px 14px;border-radius:6px;font-size:10px;text-decoration:none">Login</a></div>`; pd.getElementById('onlineCountTop').innerText=`• 0 ${t('online')}, 0 ${t('offline')}`; return;}
+if(cur==='message') await heartbeat();
+if(cur==='home'){
+sW.style.display='none';hW.style.display='none';box.style.display='flex';
+let {data:messages}=await sb.from('live_chat').select('*').order('created_at',{ascending:true}).limit(100);
+let {data:presence}=await sb.from('user_presence').select('*').not('email','like','guest_%');
+let pMap={};(presence||[]).forEach(p=>pMap[p.email]=p);
+let online=presence?.filter(u=> new Date() - new Date(u.last_seen) < ONLINE_LIMIT_MS )||[];
+let offline=presence?.filter(u=> new Date() - new Date(u.last_seen) >= ONLINE_LIMIT_MS )||[];
+pd.getElementById('onlineCountTop').innerText=`• ${online.length} ${t('online')}, ${offline.length} ${t('offline')}`;
+box.innerHTML='';(messages||[]).forEach(m=>{ if(m.email.includes('guest_')) return; let isMe=m.email===myEmail; let u=pMap[m.email]||{}; let dName=u.display_name||m.email.split('@')[0]; let aUrl=u.avatar_url||''; let av=aUrl?`<img src="${aUrl}">`:dName.charAt(0).toUpperCase(); let imgHtml=m.image_url?`<img src="${m.image_url}" onclick="window.open('${m.image_url}','_blank')">`:''; let row=pd.createElement('div'); row.className='skMsgRow'+(isMe?' me':''); row.innerHTML=`<div class="skAvatar">${av}</div><div class="skBubbleWrap"><div class="skName">${isMe?'You':dName} • ${m.email}</div><div class="skBubble ${isMe?'me':''}">${m.message||''}${imgHtml}</div></div>`; box.appendChild(row); });
+}else if(cur==='message'){
+hW.style.display='none';box.style.display='flex';sW.style.display='block';
+let {data:presence}=await sb.from('user_presence').select('*').not('email','like','guest_%').order('last_seen',{ascending:false}).limit(100);
+let online=presence?.filter(u=> new Date() - new Date(u.last_seen) < ONLINE_LIMIT_MS )||[];
+let offline=presence?.filter(u=> new Date() - new Date(u.last_seen) >= ONLINE_LIMIT_MS )||[];
+pd.getElementById('onlineCountTop').innerText=`• ${online.length} ${t('online')}, ${offline.length} ${t('offline')}`;
+let searchVal=pd.getElementById('skSearch').value.toLowerCase();
+let filtered=presence?.filter(u=>{ if(!searchVal) return true; return (u.display_name&&u.display_name.toLowerCase().includes(searchVal))||u.email.toLowerCase().includes(searchVal); })||[];
+box.innerHTML=''; if(filtered.length===0){box.innerHTML=`<div style="text-align:center;padding:20px;font-size:10px">${t('noUser')}</div>`;return;}
+filtered.forEach(u=>{ let isOn= new Date() - new Date(u.last_seen) < ONLINE_LIMIT_MS; let isMe=u.email===myEmail; let letter=(u.display_name||'U').charAt(0).toUpperCase(); let av=u.avatar_url?`<img src="${u.avatar_url}">`:letter; let div=pd.createElement('div'); div.className='skU'; div.innerHTML=`<div class="skAvatar">${av}</div><div style="flex:1;overflow:hidden"><div style="font-weight:700;font-size:11px">${u.display_name} ${isMe?'(You)':''}</div><div style="font-size:8px;color:#64748b">${u.email}</div></div><div style="text-align:right"><div style="font-size:14px">${isOn?'🟢':'⚪️'}</div><div style="font-size:7px;color:${isOn?'#16a34a':'#94a3b8'}">${isOn?t('online'):t('offline')}</div></div>`; box.appendChild(div); });
+}else{
+box.style.display='none';sW.style.display='none';hW.style.display='block';
+hW.innerHTML=`<div style="padding:12px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><div style="flex:1;height:1px;background:#cbd5e1"></div><div style="font-weight:600;font-size:14px;color:#6b7280">${t('helpline')}</div><div style="flex:1;height:1px;background:#cbd5e1"></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><a href="https://wa.me/8801700000000" target="_blank" style="text-decoration:none;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 6px 10px;display:flex;flex-direction:column;align-items:center;gap:8px"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" style="width:42px;height:42px"><div style="font-weight:600;font-size:9px;color:#111">${t('wa')}</div></a><a href="https://t.me/yourusername" target="_blank" style="text-decoration:none;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 6px 10px;display:flex;flex-direction:column;align-items:center;gap:8px"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" style="width:42px;height:42px"><div style="font-weight:600;font-size:9px;color:#111">${t('tg')}</div></a><a href="https://m.me/sknewslivebd" target="_blank" style="text-decoration:none;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 6px 10px;display:flex;flex-direction:column;align-items:center;gap:8px"><img src="https://upload.wikimedia.org/wikipedia/commons/b/be/Facebook_Messenger_logo_2020.svg" style="width:42px;height:42px"><div style="font-weight:600;font-size:9px;color:#111">${t('ms')}</div></a><a href="https://www.facebook.com/sknewslivebd" target="_blank" style="text-decoration:none;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 6px 10px;display:flex;flex-direction:column;align-items:center;gap:8px"><img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" style="width:42px;height:42px"><div style="font-weight:600;font-size:9px;color:#111">${t('fb')}</div></a><a href="tel:+8801700000000" style="text-decoration:none;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 6px 10px;display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:42px;height:42px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px">📞</div><div style="font-weight:600;font-size:9px;color:#111">${t('call')}</div></a><a href="mailto:support@sknewslive.com" style="text-decoration:none;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px 6px 10px;display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:42px;height:42px;background:#fef3c7;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px">✉️</div><div style="font-weight:600;font-size:9px;color:#111">${t('mail')}</div></a></div><div style="margin-top:14px;padding:10px;background:#f8fafc;border-radius:10px;text-align:center"><div style="font-size:9px;color:#64748b">${t('support')}</div><div style="font-size:10px;font-weight:700;color:#1e3a8a;margin-top:2px">support@sknewslive.com</div></div></div>`;
+}
+box.scrollTop=box.scrollHeight;
+}
+pd.getElementById('skFloatFinal').onclick=async()=>{let pp=pd.getElementById('skPopFinal');pp.classList.toggle('show');if(pp.classList.contains('show')){await heartbeat(); await loadChat();}};
+pd.getElementById('skCloseF').onclick=()=>pd.getElementById('skPopFinal').classList.remove('show');
+pd.getElementById('tHome').onclick=async function(){cur='home';pd.querySelectorAll('.skTab').forEach(t=>t.classList.remove('active'));this.classList.add('active');await loadChat();};
+pd.getElementById('tHelp').onclick=function(){cur='help';pd.querySelectorAll('.skTab').forEach(t=>t.classList.remove('active'));this.classList.add('active');loadChat();};
+pd.getElementById('tMsg').onclick=async function(){cur='message';pd.querySelectorAll('.skTab').forEach(t=>t.classList.remove('active'));this.classList.add('active');await loadChat();};
+pd.getElementById('skSearch').oninput=()=>loadChat();
+pd.getElementById('skSend').onclick=async()=>{let {email}=await getUserInfo();if(!email)return;let inp=pd.getElementById('skInp');if(!inp.value.trim())return;await sb.from('live_chat').insert([{email,message:inp.value}]);inp.value='';await loadChat();};
+pd.getElementById('skImgBtn').onclick=()=>pd.getElementById('skFile').click();
+pd.getElementById('skFile').onchange=async(e)=>{
+  let file=e.target.files[0]; if(!file) return;
+  let {email}=await getUserInfo(); if(!email) return;
+  let btn=pd.getElementById('skImgBtn'); let old=btn.innerHTML; btn.innerHTML='⏳'; btn.disabled=true;
+  try{ let url=await uploadToCloudinary(file); await sb.from('live_chat').insert([{email, message:'', image_url:url}]); await loadChat(); }catch(err){ alert('Upload failed: '+err.message); }
+  btn.innerHTML=old; btn.disabled=false; e.target.value='';
+};
+sb.channel('chat').on('postgres_changes',{event:'INSERT',schema:'public',table:'live_chat'},()=>loadChat()).subscribe();
+sb.channel('presence').on('postgres_changes',{event:'*',schema:'public',table:'user_presence'},()=>loadChat()).subscribe();
+}catch(e){console.log(e)}
+})();
+</script></body></html>

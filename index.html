@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<script src="theme.js"></script>
+<title>SK News Live</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f7fa; --card:#fff; --text:#222; --text2:#555; --text3:#777; --border:#eee;
+}
+[data-theme="dark"], body.dark{
+  --bg:#020617; --card:#0f172a; --text:#e2e8f0; --text2:#94a3b8; --text3:#64748b; --border:#1e293b;
+}
+body{margin:0;padding-top:162px;padding-bottom:200px;background:var(--bg);font-family:Arial,"Noto Sans Bengali",sans-serif;color:var(--text);transition:background.3s,color.3s}
+body.dark, [data-theme="dark"] body{background:var(--bg)!important;color:var(--text)}
+
+/* FIXED DARK SELECTORS - space added */
+body.dark.featured-news,
+body.dark.news-card,
+body.dark.sidebar-box,
+[data-theme="dark"].featured-news,
+[data-theme="dark"].news-card,
+[data-theme="dark"].sidebar-box{
+  background:var(--card)!important;color:var(--text);border:1px solid var(--border)
+}
+body.dark.featured-content h1,
+body.dark.news-card h3,
+body.dark.latest-item h4,
+body.dark.most-read-item span,
+[data-theme="dark"].featured-content h1,
+[data-theme="dark"].news-card h3,
+[data-theme="dark"].latest-item h4,
+[data-theme="dark"].most-read-item span{color:var(--text)!important}
+
+.header-frame{position:fixed;top:0;left:0;width:100%;height:162px;border:0;z-index:9999}
+.news-container{max-width:1200px;margin:0 auto;padding:8px 10px 25px}
+.news-layout{display:grid;grid-template-columns:minmax(0,2fr) minmax(280px,1fr);gap:12px}
+.featured-news{background:var(--card);border-radius:7px;overflow:hidden;box-shadow:0 2px 7px rgba(0,0,0,.12);margin-bottom:10px;cursor:pointer;border:1px solid var(--border)}
+.featured-news img{width:100%;height:350px;object-fit:cover;display:block}
+.news-category{display:inline-block;background:#e6002d;color:#fff;font-size:12px;padding:4px 10px;margin-top:7px;border-radius:2px}
+.featured-content{padding:0 10px 10px}
+.featured-content h1{font-size:25px;margin:6px 0 4px;line-height:1.35;color:var(--text)}
+.featured-content p{color:var(--text2);line-height:1.5;margin:0;font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.news-card{background:var(--card);border-radius:6px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.1);cursor:pointer;transition:.2s;border:1px solid var(--border)}
+.news-card:hover{transform:translateY(-2px)}
+.news-card img{width:100%;height:125px;object-fit:cover;display:block}
+.news-card-content{padding:6px}
+.news-card.news-category{font-size:10px;padding:3px 6px;margin:0 0 3px}
+.news-card h3{font-size:15px;line-height:1.35;margin:2px 0;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sidebar{display:flex;flex-direction:column;gap:10px}
+.sidebar-box{background:var(--card);border-radius:7px;padding:9px;box-shadow:0 2px 7px rgba(0,0,0,.1);border:1px solid var(--border)}
+.sidebar-title{font-size:18px;font-weight:bold;border-left:4px solid #e6002d;padding-left:7px;margin:0 0 7px;color:var(--text)}
+.latest-item{display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.latest-item:last-child{border-bottom:none}
+.latest-item img{width:70px;height:52px;object-fit:cover;border-radius:3px}
+.latest-item h4{font-size:13px;line-height:1.35;margin:0;color:var(--text)}
+.video-box iframe{width:100%;height:170px;border:0;border-radius:4px}
+.most-read-item{display:flex;gap:8px;align-items:flex-start;padding:6px 0;font-size:13px;border-bottom:1px solid var(--border);color:var(--text)}
+.most-read-item:last-child{border-bottom:none}
+.number{background:#e6002d;color:#fff;min-width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold}
+.loading{text-align:center;padding:18px;color:var(--text3)}
+.footer-frame{position:fixed;left:0;bottom:0;width:100%;height:200px;border:0;z-index:9998;display:block}
+
+@media(max-width:768px){
+  body{padding-top:162px;padding-bottom:0}
+ .header-frame{height:162px}
+ .news-container{padding:6px 7px 20px}
+ .news-layout{display:block}
+ .sidebar{margin-top:10px}
+ .featured-news img{height:230px}
+ .featured-content h1{font-size:21px}
+ .news-grid{grid-template-columns:repeat(2,1fr);gap:7px}
+ .news-card img{height:115px}
+ .sidebar-box{padding:8px}
+ .footer-frame{position:relative;left:auto;bottom:auto;width:100%;height:200px;margin-top:10px;z-index:10}
+}
+@media(max-width:480px){.featured-news img{height:210px}.featured-content h1{font-size:20px}.news-card img{height:100px}}
+</style>
+</head>
+<body>
+<iframe src="header.html" class="header-frame" id="headerFrame" scrolling="no"></iframe>
+<main class="news-container">
+<div class="news-layout">
+<section class="main-news-area">
+<article class="featured-news" id="mainNews"><div class="loading" id="mainLoading"></div></article>
+<div class="news-grid" id="newsGrid"><div class="loading" id="gridLoading"></div></div>
+</section>
+<aside class="sidebar">
+<div class="sidebar-box"><h2 class="sidebar-title" id="tLatest"></h2><div id="latestBox"><div class="loading" id="latestLoading"></div></div></div>
+<div class="sidebar-box"><h2 class="sidebar-title" id="tLive"></h2><div class="video-box"><iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe></div></div>
+<div class="sidebar-box"><h2 class="sidebar-title" id="tMost"></h2><div id="mostReadBox"><div class="loading" id="mostLoading"></div></div></div>
+</aside>
+</div>
+</main>
+<iframe src="footer.html" class="footer-frame" id="footerFrame" scrolling="no"></iframe>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://nsjeprihgudhiczefopu.supabase.co";
+const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5zamVwcmloZ3VkaGljemVmb3B1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMTYxOTAsImV4cCI6MjA5ODY5MjE5MH0.mOpduK47q0bjV-dQpkUPiq8xkhspF6eFqLzrGiaArd4";
+const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+let allArticles=[];
+const LANG_UI={
+bn:{latest:"সর্বশেষ সংবাদ",live:"লাইভ টিভি",most:"সর্বাধিক পঠিত",loading:"লোড হচ্ছে...",noNews:"কোনো সংবাদ পাওয়া যায়নি",general:"সাধারণ"},
+en:{latest:"Latest News",live:"Live TV",most:"Most Read",loading:"Loading...",noNews:"No news found",general:"General"},
+ar:{latest:"آخر الأخبار",live:"البث المباشر",most:"الأكثر قراءة",loading:"جار التحميل...",noNews:"لا توجد أخبار",general:"عام"},
+hi:{latest:"ताज़ा खबरें",live:"लाइव टीवी",most:"सबसे अधिक पढ़े गए",loading:"लोड हो रहा है...",noNews:"कोई खबर नहीं मिली",general:"सामान्य"},
+ur:{latest:"تازہ ترین خبریں",live:"لائیو ٹی وی",most:"سب سے زیادہ پڑھی گئی",loading:"لوڈ ہو رہا ہے...",noNews:"کوئی خبر نہیں ملی",general:"عام"},
+es:{latest:"Últimas Noticias",live:"TV en Vivo",most:"Más Leídas",loading:"Cargando...",noNews:"No hay noticias",general:"General"},
+fr:{latest:"Dernières Nouvelles",live:"TV en Direct",most:"Les Plus Lus",loading:"Chargement...",noNews:"Aucune actualité",general:"Général"},
+tr:{latest:"Son Haberler",live:"Canlı TV",most:"En Çok Okunan",loading:"Yükleniyor...",noNews:"Haber bulunamadı",general:"Genel"},
+de:{latest:"Neueste Nachrichten",live:"Live-TV",most:"Meistgelesen",loading:"Wird geladen...",noNews:"Keine Nachrichten gefunden",general:"Allgemein"},
+id:{latest:"Berita Terbaru",live:"TV Langsung",most:"Paling Banyak Dibaca",loading:"Memuat...",noNews:"Tidak ada berita",general:"Umum"}
+};
+const LANG_CODES=["bn","en","ar","hi","ur","es","fr","tr","de","id"];
+const catMapBnToEn={'সব':'All','জাতীয়':'National','রাজনীতি':'Politics','আন্তর্জাতিক':'International','খেলা':'Sports','বিনোদন':'Entertainment','টেক':'Tech','লাইফস্টাইল':'Lifestyle','সাধারণ':'General'};
+const transCache = new Map();
+function getCache(k){try{let v=localStorage.getItem('sk_tr_'+k);if(v) return v;}catch(e){} return transCache.get(k)||null;}
+function setCache(k,v){transCache.set(k,v); try{localStorage.setItem('sk_tr_'+k,v);}catch(e){}}
+async function bulkTranslate(texts, to){
+  if(!texts.length || to==='bn') return texts;
+  let cacheMap={}; let toTrans=[];
+  texts.forEach((t,i)=>{let key=t+'::'+to; let cv=getCache(key); if(cv) cacheMap[i]=cv; else toTrans.push({i,t});});
+  if(toTrans.length===0) return texts.map((_,i)=>cacheMap[i]);
+  try{
+    let joined = toTrans.map(o=>o.t.replace(/\n/g,' ')).join(' ||| ');
+    let url=`https://translate.googleapis.com/translate_a/single?client=gtx&sl=bn&tl=${to}&dt=t&q=${encodeURIComponent(joined)}`;
+    let r=await fetch(url); let d=await r.json(); let full='';
+    if(d && d[0]) d[0].forEach(a=>{ if(a[0]) full+=a[0]; });
+    let parts = full.split('|||').map(s=>s.trim());
+    parts.forEach((p,idx)=>{let orig=toTrans[idx]; if(orig){ setCache(orig.t+'::'+to,p); cacheMap[orig.i]=p; }});
+    return texts.map((t,i)=>cacheMap[i]||t);
+  }catch(e){ return texts; }
+}
+function getUrlLanguage(){try{const p=new URLSearchParams(window.location.search);const l=p.get("lang");if(LANG_CODES.includes(l)) return l;}catch(e){}return null;}
+function getLang(){const u=getUrlLanguage(); if(u){localStorage.setItem("sk_lang",u);return u;} const s=localStorage.getItem("sk_lang"); if(LANG_CODES.includes(s)) return s; return "bn";}
+function getTheme(){return localStorage.getItem("sk_theme")||localStorage.getItem("theme")||"light";}
+function tUI(k){const lang=getLang(); if(LANG_UI[lang] && LANG_UI[lang][k]) return LANG_UI[lang][k]; return LANG_UI.en[k]||"";}
+function applyContentLang(){
+  const lang=getLang(); document.documentElement.lang=lang;
+  const el=(id)=>document.getElementById(id);
+  if(el("tLatest")) el("tLatest").textContent=tUI("latest");
+  if(el("tLive")) el("tLive").textContent=tUI("live");
+  if(el("tMost")) el("tMost").textContent=tUI("most");
+  ["mainLoading","gridLoading","latestLoading","mostLoading"].forEach(id=>{if(el(id)) el(id).textContent=tUI("loading");});
+}
+function applyTheme(t){
+  const isDark = t==="dark";
+  if(isDark){ document.body.classList.add("dark"); document.documentElement.setAttribute("data-theme","dark"); }
+  else { document.body.classList.remove("dark"); document.documentElement.setAttribute("data-theme","light"); }
+  pushToFrames();
+}
+function sendLanguageToFrame(f){if(!f) return; try{if(f.contentWindow){f.contentWindow.postMessage({type:"LANG_CHANGE",lang:getLang()},"*"); f.contentWindow.postMessage({type:"THEME_CHANGE",theme:getTheme()},"*");}}catch(e){}}
+function pushToFrames(){sendLanguageToFrame(document.getElementById("headerFrame")); sendLanguageToFrame(document.getElementById("footerFrame"));}
+function notifyLanguageChange(lang){try{window.parent.postMessage({type:"LANG_CHANGE",lang},"*");}catch(e){} try{if(window.top!==window) window.top.postMessage({type:"LANG_CHANGE",lang},"*");}catch(e){} try{if("BroadcastChannel" in window){const ch=new BroadcastChannel("sknews_language_channel"); ch.postMessage({type:"LANG_CHANGE",lang}); ch.close();}}catch(e){}}
+async function changeLanguage(lang){
+  if(!LANG_CODES.includes(lang)) lang="bn";
+  localStorage.setItem("sk_lang",lang);
+  applyContentLang(); notifyLanguageChange(lang); pushToFrames();
+  if(allArticles.length>0) await renderArticles(allArticles);
+}
+window.setLang=(l)=>changeLanguage(l);
+window.setLanguage=(l)=>changeLanguage(l);
+window.setTheme=(t)=>{const v=t==="dark"?"dark":"light"; localStorage.setItem("sk_theme",v); localStorage.setItem("theme",v); applyTheme(v);};
+window.addEventListener("storage",e=>{if(e.key==="sk_lang"){applyContentLang(); if(allArticles.length) renderArticles(allArticles); pushToFrames();} if(e.key==="sk_theme"||e.key==="theme") applyTheme(e.newValue||"light");});
+try{if("BroadcastChannel" in window){const ch=new BroadcastChannel("sknews_language_channel"); ch.onmessage=e=>{if(e.data?.type==="LANG_CHANGE"){const lang=LANG_CODES.includes(e.data.lang)?e.data.lang:"bn"; localStorage.setItem("sk_lang",lang); applyContentLang(); if(allArticles.length) renderArticles(allArticles); pushToFrames();}};}}catch(e){}
+window.addEventListener("message",e=>{
+  if(!e.data) return;
+  const type=e.data.type;
+  if(type==="LANG_CHANGE"||type==="SET_LANGUAGE"){const lang=LANG_CODES.includes(e.data.lang)?e.data.lang:"bn"; localStorage.setItem("sk_lang",lang); applyContentLang(); if(allArticles.length) renderArticles(allArticles); pushToFrames(); return;}
+  if(["REQUEST_LANGUAGE","GET_LANGUAGE","LANGUAGE_READY","HEADER_READY","FOOTER_READY"].includes(type)){pushToFrames(); return;}
+  if(type==="THEME_CHANGE"){const th=e.data.theme==="dark"?"dark":"light"; localStorage.setItem("sk_theme",th); localStorage.setItem("theme",th); applyTheme(th); return;}
+  if(type==="category"){const cat=e.data.cat; const f=cat==="সব"?allArticles:allArticles.filter(a=>a.category===cat); if(f.length) renderArticles(f);}
+});
+document.getElementById("headerFrame").addEventListener("load",function(){sendLanguageToFrame(this); setTimeout(()=>sendLanguageToFrame(document.getElementById("headerFrame")),200);});
+document.getElementById("footerFrame").addEventListener("load",function(){sendLanguageToFrame(this);});
+window.addEventListener("load",()=>{applyContentLang(); applyTheme(getTheme()); setTimeout(pushToFrames,100); setTimeout(pushToFrames,500);});
+window.addEventListener("pageshow",()=>{applyContentLang(); applyTheme(getTheme()); setTimeout(pushToFrames,200);});
+async function loadArticles(){
+  const mainNews=document.getElementById("mainNews");
+  try{
+    mainNews.innerHTML='<div class="loading">'+tUI("loading")+'</div>';
+    const {data,error}=await supabaseClient.from("articles").select("id,title,category,content,image_url,created_at").order("created_at",{ascending:false}).limit(20);
+    if(error) throw error;
+    if(!data||!data.length){mainNews.innerHTML='<div class="loading">'+tUI("noNews")+'</div>'; return;}
+    allArticles=data;
+    await renderArticles(data);
+  }catch(err){mainNews.innerHTML='<div class="loading" style="color:#c8102e;">'+(err.message||"Error")+'</div>';}
+}
+async function renderArticles(data){
+  if(!data||!data.length) return;
+  const lang=getLang();
+  if(lang==='bn'){
+    const m=data[0]; document.getElementById("mainNews").innerHTML='<img src="'+(m.image_url||"https://picsum.photos/800/400")+'"><div class="featured-content"><span class="news-category">'+(m.category||tUI("general"))+'</span><h1>'+(m.title||"")+'</h1><p>'+(m.content?m.content.substring(0,200)+"...":"")+'</p></div>';
+    document.getElementById("mainNews").onclick=()=>location.href="article.html?id="+encodeURIComponent(m.id);
+    document.getElementById("newsGrid").innerHTML=data.slice(1,13).map(a=>`<article class="news-card" onclick="location.href='article.html?id=${a.id}'"><img src="${a.image_url||"https://picsum.photos/300/200"}"><div class="news-card-content"><span class="news-category">${a.category||tUI("general")}</span><h3>${a.title||""}</h3></div></article>`).join("");
+    document.getElementById("latestBox").innerHTML=data.slice(0,5).map(a=>`<div class="latest-item" onclick="location.href='article.html?id=${a.id}'"><img src="${a.image_url||"https://picsum.photos/70/50"}"><h4>${a.title||""}</h4></div>`).join("");
+    document.getElementById("mostReadBox").innerHTML=data.slice(0,5).map((a,i)=>`<div class="most-read-item"><span class="number">${i+1}</span><span onclick="location.href='article.html?id=${a.id}'" style="cursor:pointer">${a.title||""}</span></div>`).join("");
+    return;
+  }
+  document.getElementById("mainNews").innerHTML='<div class="loading">'+tUI("loading")+'</div>';
+  let titles=data.map(a=>a.title);
+  let catsEn=data.map(a=>catMapBnToEn[a.category]||a.category||'General');
+  let [tTitles, tCats] = await Promise.all([bulkTranslate(titles, lang), lang==='en'?catsEn:bulkTranslate(catsEn, lang)]);
+  let td=data.map((a,i)=>({...a,_tTitle:tTitles[i]||a.title,_tCat:tCats[i]||catsEn[i]}));
+  const m=td[0];
+  document.getElementById("mainNews").innerHTML='<img src="'+(m.image_url||"")+'"><div class="featured-content"><span class="news-category">'+m._tCat+'</span><h1>'+m._tTitle+'</h1><p></p></div>';
+  document.getElementById("mainNews").onclick=()=>location.href="article.html?id="+m.id;
+  document.getElementById("newsGrid").innerHTML=td.slice(1,13).map(a=>`<article class="news-card" onclick="location.href='article.html?id=${a.id}'"><img src="${a.image_url||""}"><div class="news-card-content"><span class="news-category">${a._tCat}</span><h3>${a._tTitle}</h3></div></article>`).join("");
+  document.getElementById("latestBox").innerHTML=td.slice(0,5).map(a=>`<div class="latest-item" onclick="location.href='article.html?id=${a.id}'"><img src="${a.image_url||""}"><h4>${a._tTitle}</h4></div>`).join("");
+  document.getElementById("mostReadBox").innerHTML=td.slice(0,5).map((a,i)=>`<div class="most-read-item"><span class="number">${i+1}</span><span onclick="location.href='article.html?id=${a.id}'" style="cursor:pointer">${a._tTitle}</span></div>`).join("");
+}
+applyContentLang(); applyTheme(getTheme()); loadArticles();
+</script>
+</body>
+</html>

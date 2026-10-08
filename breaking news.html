@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Breaking News Management</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:SolaimanLipi,sans-serif;background:#f1f5f9;min-height:100vh;display:flex;flex-direction:column}
+iframe.headerFrame{width:100%;height:115px;border:0}iframe.footerFrame{width:100%;height:400px;border:0}
+.container{flex:1;max-width:800px;width:100%;margin:20px auto;padding:0 12px}
+.card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 4px 15px rgba(0,0,0,.06);margin-bottom:18px}
+.inputRow{display:flex;gap:8px}input{flex:1;padding:13px;border:1px solid #ddd;border-radius:10px}
+.btn{padding:12px 16px;border:none;border-radius:10px;cursor:pointer;font-weight:700}.btn-add{background:#c8102e;color:#fff}
+.btn-sm{padding:7px 11px;font-size:12px;border-radius:8px;border:1px solid #ddd}
+.btn-on{background:#16a34a;color:#fff}.btn-off{background:#fff}.btn-edit{background:#eff6ff;color:#1d4ed8}.btn-del{background:#fef2f2;color:#dc2626}
+.newsItem{display:flex;justify-content:space-between;gap:10px;border:1px solid #eef2f7;padding:14px;border-radius:12px;margin-top:12px}
+.badge{padding:4px 9px;border-radius:20px;font-size:11px;font-weight:800}.active{background:#dcfce7;color:#166534}.inactive{background:#f3f4f6;color:#6b7280}
+.rule{font-size:13px;background:#fff7ed;border:1px dashed #f59e0b;padding:10px;border-radius:10px;margin-bottom:14px}
+</style>
+</head>
+<body>
+<iframe src="header.html" class="headerFrame" scrolling="no"></iframe>
+<div class="container">
+<div class="card">
+<h2>Breaking News Management</h2>
+<div class="rule">📌 সর্বোচ্চ ৩টি Active | ৫ দিন পর অটো ডিলিট</div>
+<div class="inputRow"><input type="text" id="newsInput" placeholder="নতুন ব্রেকিং যোগ করুন"><button class="btn btn-add" onclick="addNews()">যোগ করুন</button></div>
+</div>
+<div class="card"><h2>বর্তমান ব্রেকিং সমূহ - মোট: <span id="count">0</span></h2><div id="list">লোড হচ্ছে...</div></div>
+</div>
+<iframe src="footer.html" class="footerFrame" scrolling="no"></iframe>
+<script>
+const SUPABASE_URL="https://nsjeprihgudhiczefopu.supabase.co";
+const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5zamVwcmloZ3VkaGljemVmb3B1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMTYxOTAsImV4cCI6MjA5ODY5MjE5MH0.mOpduK47q0bjV-dQpkUPiq8xkhspF6eFqLzrGiaArd4";
+const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const MAX_ACTIVE=3, EXPIRE_DAYS=5;
+function daysLeft(d){return Math.max(0,Math.ceil((new Date(new Date(d).getTime()+5*86400000)-new Date())/86400000))}
+async function autoDelete(){const{data}=await supabaseClient.from('breaking_news').select('id,created_at');if(!data)return;for(let n of data){if((new Date()-new Date(n.created_at))/86400000>=5)await supabaseClient.from('breaking_news').delete().eq('id',n.id)}}
+async function load(){await autoDelete();const{data}=await supabaseClient.from('breaking_news').select('*').order('created_at',{ascending:false});const list=document.getElementById('list'),c=document.getElementById('count');if(!data||!data.length){list.innerHTML='কোনো নিউজ নেই';c.innerText=0;return}c.innerText=data.length;const activeCount=data.filter(x=>x.is_active).length;list.innerHTML=data.map(n=>`<div class="newsItem"><div><b>${n.title}</b><div><span class="badge ${n.is_active?'active':'inactive'}">${n.is_active?'Active':'Inactive'}</span> বাকি ${daysLeft(n.created_at)} দিন</div></div><div style="display:flex;gap:6px">${n.is_active?`<button class="btn-sm btn-off" onclick="toggleActive('${n.id}',true)">Inactive</button>`:`<button class="btn-sm btn-on" onclick="toggleActive('${n.id}',false,${activeCount})">Active</button>`}<button class="btn-sm btn-edit" onclick="editNews('${n.id}')">Edit</button><button class="btn-sm btn-del" onclick="deleteNews('${n.id}')">Delete</button></div></div>`).join('')}
+async function addNews(){const input=document.getElementById('newsInput');const title=input.value.trim();if(!title)return;const{data}=await supabaseClient.from('breaking_news').select('id').eq('is_active',true);if(data&&data.length>=MAX_ACTIVE)return alert('সর্বোচ্চ ৩টি Active রাখতে পারবেন');await supabaseClient.from('breaking_news').insert({title,is_active:true});input.value='';load()}
+async function toggleActive(id,cur,count){if(!cur&&count>=MAX_ACTIVE)return alert('৪র্থ Active করতে হলে একটি Inactive করুন');await supabaseClient.from('breaking_news').update({is_active:!cur}).eq('id',id);load()}
+async function deleteNews(id){if(!confirm('মুছবেন?'))return;await supabaseClient.from('breaking_news').delete().eq('id',id);load()}
+async function editNews(id){const{data}=await supabaseClient.from('breaking_news').select('title').eq('id',id).single();const nt=prompt('এডিট:',data.title);if(nt)await supabaseClient.from('breaking_news').update({title:nt}).eq('id',id);load()}
+load();
+</script>
+</body>
+</html>

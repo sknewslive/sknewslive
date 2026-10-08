@@ -1,0 +1,2300 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SK News Live Header</title>
+
+<style>
+:root{
+  --p:#c8102e;
+  --d:#1a1a1a;
+  --purple:#800080;
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,
+body{
+  width:100%;
+  min-height:100%;
+}
+
+body{
+  font-family:Arial,"Noto Sans Bengali",sans-serif;
+}
+
+.header{
+  position:relative;
+  width:100%;
+  background:var(--p);
+  z-index:9999;
+  box-shadow:0 2px 4px rgba(0,0,0,.2);
+}
+
+.mainLine{
+  width:100%;
+  max-width:1200px;
+  margin:0 auto;
+  padding:8px 12px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.logoArea{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-shrink:0;
+}
+
+.logo img{
+  height:32px;
+  width:auto;
+  display:block;
+}
+
+.siteName{
+  color:#fff;
+  font-size:14px;
+  font-weight:bold;
+  white-space:nowrap;
+}
+
+.searchBox{
+  flex:1;
+  min-width:0;
+  margin:0 5px;
+}
+
+.searchBox input{
+  width:100%;
+  padding:6px 8px;
+  border:none;
+  border-radius:4px;
+  outline:none;
+  font-size:12px;
+  background:#fff;
+  color:#222;
+}
+
+.langBtn{
+  background:rgba(0,0,0,.25);
+  border:none;
+  color:#fff;
+  padding:5px 10px;
+  font-size:11px;
+  border-radius:4px;
+  cursor:pointer;
+  flex-shrink:0;
+}
+
+.header-right-btns{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  margin-left:auto;
+  padding-right:8px;
+}
+
+.menuBtn,
+.settingsBtn{
+  background:transparent;
+  border:none;
+  color:#fff;
+  font-size:22px;
+  padding:6px;
+  cursor:pointer;
+  border-radius:4px;
+  text-decoration:none;
+}
+
+.menuBtn:hover,
+.settingsBtn:hover{
+  background:rgba(255,255,255,.12);
+}
+
+.themeSwitch{
+  position:relative;
+  width:32px;
+  height:18px;
+  border:1px solid #d5d5d5;
+  border-radius:20px;
+  background:#f1f1f1;
+  padding:0;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  overflow:hidden;
+  flex-shrink:0;
+  transition:.2s;
+}
+
+.themeSun,
+.themeMoon{
+  position:relative;
+  z-index:2;
+  width:13px;
+  height:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:9px;
+  line-height:18px;
+  pointer-events:none;
+}
+
+.themeKnob{
+  position:absolute;
+  z-index:1;
+  left:1px;
+  top:1px;
+  width:15px;
+  height:15px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 1px 3px #0003;
+  transition:.2s;
+}
+
+.themeSwitch.dark{
+  background:#1877f2;
+  border-color:#1877f2;
+}
+
+.themeSwitch.dark .themeKnob{
+  left:15px;
+  background:#fff;
+}
+
+.menuLine{
+  width:100%;
+  overflow-x:auto;
+  background:#fff;
+  border-top:1px solid rgba(255,255,255,.15);
+}
+
+.menuLine::-webkit-scrollbar{
+  display:none;
+}
+
+.menu{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+  list-style:none;
+  white-space:nowrap;
+  padding:8px 3%;
+}
+
+.menu a{
+  position:relative;
+  display:block;
+  padding:4px 2px;
+  color:#333;
+  text-decoration:none;
+  font-size:13px;
+  font-weight:600;
+}
+
+.menu a:hover,
+.menu a.active{
+  color:var(--purple);
+}
+
+.menu a.active::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:-4px;
+  width:100%;
+  height:2px;
+  background:var(--purple);
+}
+
+.tickerWrap{
+  width:100%;
+  height:31px;
+  background:#222;
+  border-top:2px solid var(--p);
+  overflow:hidden;
+  padding:6px 0;
+}
+
+.tickerLabel{
+  float:left;
+  background:var(--p);
+  color:#fff;
+  padding:3px 10px;
+  margin-top:-1px;
+  font-size:11px;
+  font-weight:bold;
+}
+
+.tickerContent{
+  margin-left:75px;
+  overflow:hidden;
+  white-space:nowrap;
+}
+
+.tickerContent span{
+  display:inline-block;
+  padding-right:30px;
+  color:#fff;
+  font-size:12px;
+  animation:tickerScroll 25s linear infinite;
+}
+
+@keyframes tickerScroll{
+  0%{
+    transform:translateX(100%);
+  }
+  100%{
+    transform:translateX(-100%);
+  }
+}
+
+/* DARK MODE */
+
+html.dark-mode .menuLine,
+body.dark .menuLine{
+  background:#111827;
+  border-top-color:rgba(255,255,255,.08);
+}
+
+html.dark-mode .menu a,
+body.dark .menu a{
+  color:#e5e7eb;
+}
+
+html.dark-mode .menu a:hover,
+html.dark-mode .menu a.active,
+body.dark .menu a:hover,
+body.dark .menu a.active{
+  color:#fff;
+}
+
+html.dark-mode .menu a.active::after,
+body.dark .menu a.active::after{
+  background:#fff;
+}
+
+html.dark-mode .searchBox input,
+body.dark .searchBox input{
+  background:#1f2937;
+  color:#fff;
+}
+
+html.dark-mode .header,
+body.dark .header{
+  box-shadow:0 2px 5px rgba(0,0,0,.45);
+}
+
+/* MOBILE */
+
+@media(max-width:767px){
+
+  .mainLine{
+    padding:8px;
+    gap:5px;
+  }
+
+  .logo img{
+    height:30px;
+  }
+
+  .siteName{
+    font-size:13px;
+  }
+
+  .searchBox{
+    margin:0 2px;
+  }
+
+  .searchBox input{
+    font-size:11px;
+    padding:6px;
+  }
+
+  .langBtn{
+    padding:5px 7px;
+  }
+
+  .header-right-btns{
+    gap:2px;
+    padding-right:0;
+  }
+
+  .menuBtn,
+  .settingsBtn{
+    font-size:20px;
+    padding:5px;
+  }
+
+  .menu{
+    justify-content:flex-start;
+    gap:18px;
+    padding:8px 12px;
+  }
+}
+
+@media(min-width:768px){
+
+  .logo img{
+    height:40px;
+  }
+
+  .siteName{
+    font-size:18px;
+  }
+
+  .searchBox{
+    max-width:400px;
+  }
+
+  .menu{
+    gap:30px;
+    padding:10px 3%;
+  }
+
+  .menu a{
+    font-size:14px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+  <div class="mainLine">
+
+    <div class="logoArea">
+
+      <a
+        href="index.html"
+        target="_top"
+        class="logo"
+      >
+        <img
+          src="logs/logo.png"
+          alt="SK News"
+        >
+      </a>
+
+      <span class="siteName">
+        SK News Live
+      </span>
+
+    </div>
+
+    <div class="searchBox">
+
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="খুঁজুন..."
+      >
+
+    </div>
+
+    <button
+      class="langBtn"
+      id="langBtn"
+      type="button"
+    >
+      বাং
+    </button>
+
+    <div class="header-right-btns">
+
+      <button
+        type="button"
+        class="themeSwitch"
+        id="themeSwitch"
+        title="Light / Dark"
+      >
+        <span class="themeSun">☀️</span>
+        <span class="themeKnob"></span>
+        <span class="themeMoon">🌙</span>
+      </button>
+
+      <button
+        type="button"
+        class="settingsBtn"
+        id="settingsBtn"
+        title="Settings"
+      >
+        ⚙️
+      </button>
+
+      <button
+        type="button"
+        class="menuBtn"
+        id="menuBtn"
+        title="Menu"
+      >
+        ☰
+      </button>
+
+    </div>
+
+  </div>
+
+  <div
+    class="menuLine"
+    id="menuLine"
+  >
+
+    <ul class="menu">
+
+      <li>
+        <a
+          href="#"
+          class="active"
+          data-cat="সব"
+        >
+          সব
+        </a>
+      </li>
+
+      <li>
+        <a
+          href="#"
+          data-cat="জাতীয়"
+        >
+          জাতীয়
+        </a>
+      </li>
+
+      <li>
+        <a
+          href="#"
+          data-cat="রাজনীতি"
+        >
+          রাজনীতি
+        </a>
+      </li>
+
+      <li>
+        <a
+          href="#"
+          data-cat="আন্তর্জাতিক"
+        >
+          আন্তর্জাতিক
+        </a>
+      </li>
+
+      <li>
+        <a
+          href="#"
+          data-cat="খেলা"
+        >
+          খেলা
+        </a>
+      </li>
+
+      <li>
+        <a
+          href="#"
+          data-cat="বিনোদন"
+        >
+          বিনোদন
+        </a>
+      </li>
+
+      <li>
+        <a
+          href="#"
+          data-cat="টেক"
+        >
+          টেক
+        </a>
+      </li>
+
+      <li>
+        <a
+          href="#"
+          data-cat="লাইফস্টাইল"
+        >
+          লাইফস্টাইল
+        </a>
+      </li>
+
+    </ul>
+
+  </div>
+
+  <div class="tickerWrap">
+
+    <div class="tickerLabel">
+      ব্রেকিং
+    </div>
+
+    <div class="tickerContent">
+
+      <span id="breakingText">
+        লোড হচ্ছে...
+      </span>
+
+    </div>
+
+  </div>
+
+</header>
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+  'https://nsjeprihgudhiczefopu.supabase.co';
+
+const SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5zamVwcmloZ3VkaGljemVmb3B1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMTYxOTAsImV4cCI6MjA5ODY5MjE5MH0.mOpduK47q0bjV-dQpkUPiq8xkhspF6eFqLzrGiaArd4';
+
+let supabaseClient = null;
+let supabaseReady = null;
+
+let breakingRealtimeChannel = null;
+let breakingRefreshTimer = null;
+let breakingLastSignature = '';
+
+/* =====================================================
+   MENU ITEMS
+   DELETE REQUESTS REMOVED
+===================================================== */
+
+const menuItems = [
+
+  {
+    icon:'🏠',
+    text:'Home',
+    bn:'হোম',
+    url:'index.html'
+  },
+
+  {
+    icon:'📂',
+    text:'All Articles',
+    bn:'সব আর্টিকেল',
+    url:'my-articles.html'
+  },
+
+  {
+    icon:'✍️',
+    text:'Write Now',
+    bn:'লিখুন',
+    url:'write.html'
+  },
+
+  {
+    icon:'ℹ️',
+    text:'About',
+    bn:'সম্পর্কে',
+    url:'about.html'
+  },
+
+  {
+    icon:'📞',
+    text:'Contact',
+    bn:'যোগাযোগ',
+    url:'contact.html'
+  },
+
+  {
+    icon:'⚙️',
+    text:'Go to Settings',
+    bn:'সেটিংস',
+    settings:true
+  }
+
+];
+
+/* =====================================================
+   SETTINGS POPUP
+===================================================== */
+
+function closeSettingsPopup(){
+
+  try{
+
+    const topDoc =
+      window.top.document;
+
+    const popup =
+      topDoc.getElementById(
+        'settingsPopup'
+      );
+
+    if(popup){
+      popup.remove();
+    }
+
+    const style =
+      topDoc.getElementById(
+        'settingsPopupStyle'
+      );
+
+    if(style){
+      style.remove();
+    }
+
+  }catch(e){
+
+    console.error(
+      'Close settings error:',
+      e
+    );
+
+  }
+
+}
+
+function openSettingsPopup(){
+
+  try{
+
+    const topDoc =
+      window.top.document;
+
+    closeSettingsPopup();
+
+    const popup =
+      topDoc.createElement('div');
+
+    popup.id =
+      'settingsPopup';
+
+    popup.innerHTML = `
+      <div class="settingsPopupBox">
+
+        <button
+          type="button"
+          class="settingsPopupClose"
+          id="settingsPopupClose"
+        >
+          ×
+        </button>
+
+        <iframe
+          src="settings.html"
+          class="settingsFrame"
+          title="Settings"
+        ></iframe>
+
+      </div>
+    `;
+
+    const style =
+      topDoc.createElement('style');
+
+    style.id =
+      'settingsPopupStyle';
+
+    style.textContent = `
+
+      #settingsPopup{
+        position:fixed!important;
+        top:8px!important;
+        right:8px!important;
+        width:340px!important;
+        height:650px!important;
+        max-height:calc(100vh - 16px)!important;
+        z-index:2147483647!important;
+        display:block!important;
+        background:#fff!important;
+        border-radius:10px!important;
+        overflow:hidden!important;
+        box-shadow:0 8px 35px rgba(0,0,0,.40)!important;
+        border:1px solid #ddd!important;
+      }
+
+      #settingsPopup .settingsPopupBox{
+        position:relative!important;
+        width:100%!important;
+        height:100%!important;
+        background:#fff!important;
+      }
+
+      #settingsPopup .settingsFrame{
+        position:absolute!important;
+        top:0!important;
+        left:0!important;
+        width:100%!important;
+        height:100%!important;
+        border:0!important;
+        background:#fff!important;
+      }
+
+      #settingsPopup .settingsPopupClose{
+        position:absolute!important;
+        top:6px!important;
+        right:6px!important;
+        width:34px!important;
+        height:34px!important;
+        border:0!important;
+        border-radius:6px!important;
+        background:#333!important;
+        color:#fff!important;
+        font-size:26px!important;
+        line-height:30px!important;
+        cursor:pointer!important;
+        z-index:2147483647!important;
+      }
+
+      @media(max-width:600px){
+
+        #settingsPopup{
+          top:5px!important;
+          right:5px!important;
+          width:calc(100vw - 10px)!important;
+          height:calc(100vh - 10px)!important;
+          max-height:none!important;
+        }
+
+      }
+
+    `;
+
+    topDoc.head.appendChild(style);
+    topDoc.body.appendChild(popup);
+
+    popup
+      .querySelector(
+        '#settingsPopupClose'
+      )
+      .addEventListener(
+        'click',
+        closeSettingsPopup
+      );
+
+    return popup;
+
+  }catch(error){
+
+    console.error(
+      'Settings popup error:',
+      error
+    );
+
+  }
+
+}
+
+/* =====================================================
+   PARENT MENU
+===================================================== */
+
+function createParentMenu(){
+
+  const parentDoc =
+    window.top.document;
+
+  let menu =
+    parentDoc.getElementById(
+      'parentMenuDropdown'
+    );
+
+  if(menu){
+
+    updateParentMenuLanguage(
+      getCurrentLanguage()
+    );
+
+    return menu;
+
+  }
+
+  menu =
+    parentDoc.createElement('div');
+
+  menu.id =
+    'parentMenuDropdown';
+
+  menu.innerHTML = `
+    <div class="parent-menu-inner">
+
+      ${menuItems.map(
+        item => `
+
+          <a
+            href="${item.settings ? '#' : (item.url || '#')}"
+            class="parent-menu-item"
+            data-settings="${item.settings ? '1' : '0'}"
+          >
+
+            <span class="menu-icon">
+              ${item.icon}
+            </span>
+
+            <span class="menu-item-text">
+              ${getCurrentLanguage()==='bn'
+                ? (item.bn || item.text)
+                : item.text}
+            </span>
+
+          </a>
+
+        `
+      ).join('')}
+
+    </div>
+  `;
+
+  const style =
+    parentDoc.createElement('style');
+
+  style.id =
+    'parentMenuStyle';
+
+  style.textContent = `
+
+    #parentMenuDropdown{
+      position:fixed!important;
+      top:85px!important;
+      right:8px!important;
+      width:260px!important;
+      max-width:calc(100vw - 16px)!important;
+      background:#fff!important;
+      border-radius:8px!important;
+      box-shadow:0 8px 28px rgba(0,0,0,.35)!important;
+      z-index:2147483646!important;
+      display:none!important;
+      overflow:hidden!important;
+    }
+
+    #parentMenuDropdown.show{
+      display:block!important;
+    }
+
+    #parentMenuDropdown .parent-menu-inner{
+      width:100%!important;
+      background:#fff!important;
+    }
+
+    #parentMenuDropdown .parent-menu-item{
+      display:flex!important;
+      align-items:center!important;
+      gap:10px!important;
+      width:100%!important;
+      padding:14px 16px!important;
+      color:#111!important;
+      background:#fff!important;
+      text-decoration:none!important;
+      font-size:15px!important;
+      border-bottom:1px solid #eee!important;
+    }
+
+    #parentMenuDropdown .parent-menu-item:last-child{
+      border-bottom:0!important;
+    }
+
+    #parentMenuDropdown .parent-menu-item:hover{
+      background:#f5f6fb!important;
+    }
+
+    #parentMenuDropdown .menu-icon{
+      width:25px!important;
+      text-align:center!important;
+      flex-shrink:0!important;
+    }
+
+    @media(max-width:600px){
+
+      #parentMenuDropdown{
+        top:75px!important;
+        right:6px!important;
+        width:260px!important;
+      }
+
+    }
+
+  `;
+
+  parentDoc.head.appendChild(style);
+  parentDoc.body.appendChild(menu);
+
+  setupMenuLinks();
+
+  return menu;
+
+}
+
+/* =====================================================
+   PARENT MENU LANGUAGE
+===================================================== */
+
+function getCurrentLanguage(){
+
+  return (
+    localStorage.getItem('sk_lang') ||
+    localStorage.getItem('lang') ||
+    'bn'
+  );
+
+}
+
+function updateParentMenuLanguage(lang){
+
+  try{
+
+    const menu =
+      window.top.document.getElementById(
+        'parentMenuDropdown'
+      );
+
+    if(!menu){
+      return;
+    }
+
+    const bn = [
+      'হোম',
+      'সব আর্টিকেল',
+      'লিখুন',
+      'সম্পর্কে',
+      'যোগাযোগ',
+      'সেটিংস'
+    ];
+
+    const en = [
+      'Home',
+      'All Articles',
+      'Write Now',
+      'About',
+      'Contact',
+      'Go to Settings'
+    ];
+
+    menu
+      .querySelectorAll(
+        '.parent-menu-item'
+      )
+      .forEach(
+        function(item,index){
+
+          const text =
+            item.querySelector(
+              '.menu-item-text'
+            );
+
+          if(text){
+
+            text.textContent =
+              lang === 'bn'
+                ? bn[index]
+                : en[index];
+
+          }
+
+        }
+      );
+
+  }catch(e){
+
+    console.error(
+      'Parent menu language error:',
+      e
+    );
+
+  }
+
+}
+
+/* =====================================================
+   MENU LINKS
+===================================================== */
+
+function setupMenuLinks(){
+
+  const menu =
+    createParentMenuWithoutLoop();
+
+  if(!menu){
+    return;
+  }
+
+  menu
+    .querySelectorAll(
+      '.parent-menu-item'
+    )
+    .forEach(
+      function(link){
+
+        if(link.dataset.bound === '1'){
+          return;
+        }
+
+        link.dataset.bound = '1';
+
+        link.addEventListener(
+          'click',
+          function(e){
+
+            if(
+              this.dataset.settings === '1'
+            ){
+
+              e.preventDefault();
+              e.stopPropagation();
+
+              menu.classList.remove(
+                'show'
+              );
+
+              openSettingsPopup();
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+}
+
+function createParentMenuWithoutLoop(){
+
+  return window.top.document.getElementById(
+    'parentMenuDropdown'
+  );
+
+}
+
+/* =====================================================
+   SUPABASE INITIALIZATION
+===================================================== */
+
+function loadSupabase(){
+
+  if(supabaseReady){
+    return supabaseReady;
+  }
+
+  supabaseReady =
+    new Promise(
+      function(resolve,reject){
+
+        function initialize(){
+
+          try{
+
+            if(
+              !window.supabase ||
+              !window.supabase.createClient
+            ){
+
+              throw new Error(
+                'Supabase library পাওয়া যায়নি'
+              );
+
+            }
+
+            supabaseClient =
+              window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY
+              );
+
+            createParentMenu();
+
+            setupMenuLinks();
+
+            resolve(
+              supabaseClient
+            );
+
+          }catch(err){
+
+            console.error(
+              'Supabase initialization error:',
+              err
+            );
+
+            reject(err);
+
+          }
+
+        }
+
+        if(
+          window.supabase
+        ){
+
+          initialize();
+          return;
+
+        }
+
+        const s =
+          document.createElement('script');
+
+        s.src =
+          'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+
+        s.async = true;
+
+        s.onload =
+          initialize;
+
+        s.onerror =
+          function(){
+
+            reject(
+              new Error(
+                'Supabase CDN load failed'
+              )
+            );
+
+          };
+
+        document.head.appendChild(s);
+
+      }
+    );
+
+  return supabaseReady;
+
+}
+
+/* =====================================================
+   MENU BUTTON
+===================================================== */
+
+document
+  .getElementById('menuBtn')
+  .addEventListener(
+    'click',
+    function(e){
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const menu =
+        createParentMenu();
+
+      menu.classList.toggle(
+        'show'
+      );
+
+    }
+  );
+
+/* =====================================================
+   CLOSE MENU WHEN CLICKING OUTSIDE
+===================================================== */
+
+try{
+
+  window.top.document.addEventListener(
+    'click',
+    function(e){
+
+      const menu =
+        window.top.document.getElementById(
+          'parentMenuDropdown'
+        );
+
+      if(
+        menu &&
+        menu.classList.contains('show') &&
+        !menu.contains(e.target)
+      ){
+
+        menu.classList.remove(
+          'show'
+        );
+
+      }
+
+    }
+  );
+
+}catch(e){}
+
+/* =====================================================
+   SETTINGS BUTTON
+===================================================== */
+
+document
+  .getElementById('settingsBtn')
+  .addEventListener(
+    'click',
+    function(e){
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      try{
+
+        const menu =
+          window.top.document.getElementById(
+            'parentMenuDropdown'
+          );
+
+        if(menu){
+          menu.classList.remove(
+            'show'
+          );
+        }
+
+      }catch(error){}
+
+      openSettingsPopup();
+
+    }
+  );
+
+/* =====================================================
+   THEME + LANGUAGE + BREAKING
+===================================================== */
+
+(function(){
+
+  const THEME_KEY =
+    'sk_theme';
+
+  const SITE_THEME_KEY =
+    'sk_site_theme';
+
+  const LANG_KEY =
+    'sk_lang';
+
+  const OLD_LANG_KEY =
+    'lang';
+
+  const themeSwitch =
+    document.getElementById(
+      'themeSwitch'
+    );
+
+  const langBtn =
+    document.getElementById(
+      'langBtn'
+    );
+
+  const searchInput =
+    document.getElementById(
+      'searchInput'
+    );
+
+  const breakingText =
+    document.getElementById(
+      'breakingText'
+    );
+
+  const tickerLabel =
+    document.querySelector(
+      '.tickerLabel'
+    );
+
+  const T = {
+
+    bn:{
+      all:'সব',
+      national:'জাতীয়',
+      politics:'রাজনীতি',
+      international:'আন্তর্জাতিক',
+      sports:'খেলা',
+      entertainment:'বিনোদন',
+      tech:'টেক',
+      lifestyle:'লাইফস্টাইল',
+      breaking:'ব্রেকিং',
+      search:'খুঁজুন...'
+    },
+
+    en:{
+      all:'All',
+      national:'National',
+      politics:'Politics',
+      international:'International',
+      sports:'Sports',
+      entertainment:'Entertainment',
+      tech:'Tech',
+      lifestyle:'Lifestyle',
+      breaking:'Breaking',
+      search:'Search...'
+    }
+
+  };
+
+  function getTheme(){
+
+    return (
+      localStorage.getItem(
+        THEME_KEY
+      ) ||
+      localStorage.getItem(
+        SITE_THEME_KEY
+      ) ||
+      'light'
+    );
+
+  }
+
+  function getLang(){
+
+    return (
+      localStorage.getItem(
+        LANG_KEY
+      ) ||
+      localStorage.getItem(
+        OLD_LANG_KEY
+      ) ||
+      'bn'
+    );
+
+  }
+
+  function saveLang(lang){
+
+    localStorage.setItem(
+      LANG_KEY,
+      lang
+    );
+
+    localStorage.setItem(
+      OLD_LANG_KEY,
+      lang
+    );
+
+    return lang;
+
+  }
+
+  /* ===================================================
+     THEME
+  =================================================== */
+
+  function applyTheme(theme){
+
+    if(
+      theme !== 'dark' &&
+      theme !== 'light'
+    ){
+
+      theme = 'light';
+
+    }
+
+    const dark =
+      theme === 'dark';
+
+    document.documentElement
+      .classList
+      .toggle(
+        'dark-mode',
+        dark
+      );
+
+    document.body
+      .classList
+      .toggle(
+        'dark',
+        dark
+      );
+
+    if(themeSwitch){
+
+      themeSwitch
+        .classList
+        .toggle(
+          'dark',
+          dark
+        );
+
+    }
+
+    try{
+
+      if(window.top){
+
+        window.top.document
+          .documentElement
+          .classList
+          .toggle(
+            'dark-mode',
+            dark
+          );
+
+        window.top.document.body
+          .classList
+          .toggle(
+            'dark',
+            dark
+          );
+
+      }
+
+    }catch(e){}
+
+  }
+
+  /* ===================================================
+     GOOGLE TRANSLATE FOR BREAKING NEWS
+  =================================================== */
+
+  async function translateBreakingText(text){
+
+    text =
+      String(
+        text || ''
+      ).trim();
+
+    if(!text){
+      return '';
+    }
+
+    try{
+
+      /*
+        একই বাংলা title বারবার Google Translate
+        করতে না হয়, তাই browser cache ব্যবহার করা হচ্ছে।
+      */
+
+      let cacheKey = '';
+
+      try{
+
+        cacheKey =
+          'sk_breaking_en_' +
+          btoa(
+            unescape(
+              encodeURIComponent(
+                text
+              )
+            )
+          ).replace(
+            /[^a-zA-Z0-9]/g,
+            ''
+          );
+
+      }catch(e){
+
+        cacheKey =
+          'sk_breaking_en_' +
+          encodeURIComponent(
+            text
+          ).replace(
+            /[^a-zA-Z0-9]/g,
+            ''
+          );
+
+      }
+
+      try{
+
+        const cached =
+          localStorage.getItem(
+            cacheKey
+          );
+
+        if(cached){
+
+          return cached;
+
+        }
+
+      }catch(e){}
+
+      const url =
+        'https://translate.googleapis.com/translate_a/single' +
+        '?client=gtx' +
+        '&sl=auto' +
+        '&tl=en' +
+        '&dt=t' +
+        '&q=' +
+        encodeURIComponent(
+          text
+        );
+
+      const response =
+        await fetch(
+          url
+        );
+
+      if(!response.ok){
+
+        return text;
+
+      }
+
+      const result =
+        await response.json();
+
+      let translated = '';
+
+      if(
+        Array.isArray(result) &&
+        Array.isArray(result[0])
+      ){
+
+        translated =
+          result[0]
+            .map(
+              function(item){
+
+                return (
+                  item &&
+                  item[0]
+                )
+                  ? item[0]
+                  : '';
+
+              }
+            )
+            .join('');
+
+      }
+
+      translated =
+        String(
+          translated || ''
+        ).trim();
+
+      /*
+        Google Translate কোনো কারণে result না দিলে
+        original বাংলা title ব্যবহার হবে।
+      */
+
+      if(!translated){
+
+        return text;
+
+      }
+
+      try{
+
+        localStorage.setItem(
+          cacheKey,
+          translated
+        );
+
+      }catch(e){}
+
+      return translated;
+
+    }catch(error){
+
+      console.error(
+        'Google Translate error:',
+        error
+      );
+
+      /*
+        Translation error হলেও Breaking News
+        কখনো ফাঁকা হবে না।
+      */
+
+      return text;
+
+    }
+
+  }
+
+  /* ===================================================
+     BREAKING NEWS
+  =================================================== */
+
+  async function loadBreakingNews(lang){
+
+    if(!breakingText){
+      return;
+    }
+
+    try{
+
+      await loadSupabase();
+
+      if(!supabaseClient){
+
+        throw new Error(
+          'Supabase client not ready'
+        );
+
+      }
+
+      console.log(
+        'Loading breaking news...'
+      );
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+
+          .from(
+            'breaking_news'
+          )
+
+          .select(
+            'id,title,is_active,created_at'
+          )
+
+          .eq(
+            'is_active',
+            true
+          )
+
+          .order(
+            'created_at',
+            {
+              ascending:false
+            }
+          )
+
+          .limit(3);
+
+      if(error){
+
+        console.error(
+          'BREAKING NEWS SUPABASE ERROR:',
+          error
+        );
+
+        throw error;
+
+      }
+
+      console.log(
+        'BREAKING NEWS DATA:',
+        data
+      );
+
+      if(
+        !data ||
+        data.length === 0
+      ){
+
+        breakingText.textContent =
+          lang === 'bn'
+            ? 'কোনো ব্রেকিং নিউজ নেই'
+            : 'No breaking news';
+
+        return;
+
+      }
+
+      const originalTitles =
+        data
+          .map(
+            function(item){
+
+              return (
+                item &&
+                item.title
+              )
+                ? String(
+                    item.title
+                  ).trim()
+                : '';
+
+            }
+          )
+          .filter(
+            Boolean
+          );
+
+      if(
+        originalTitles.length === 0
+      ){
+
+        breakingText.textContent =
+          lang === 'bn'
+            ? 'কোনো ব্রেকিং নিউজ নেই'
+            : 'No breaking news';
+
+        return;
+
+      }
+
+      /*
+        বাংলা হলে Supabase-এর মূল title।
+        English হলে Google Translate দিয়ে
+        প্রতিটি Breaking News translate হবে।
+      */
+
+      let titles =
+        [...originalTitles];
+
+      if(
+        lang === 'en'
+      ){
+
+        titles =
+          await Promise.all(
+            originalTitles.map(
+              async function(title){
+
+                try{
+
+                  return await translateBreakingText(
+                    title
+                  );
+
+                }catch(error){
+
+                  return title;
+
+                }
+
+              }
+            )
+          );
+
+      }
+
+      /*
+        এখানে language-ও signature-এর মধ্যে রাখা হয়েছে।
+        তাই একই বাংলা title থাকলেও বাংলা থেকে
+        English করলে ticker নতুন করে update হবে।
+      */
+
+      const signature =
+        lang +
+        '|' +
+        titles.join('|');
+
+      if(
+        signature ===
+        breakingLastSignature
+      ){
+
+        return;
+
+      }
+
+      breakingLastSignature =
+        signature;
+
+      const fullText =
+        titles.join(' • ');
+
+      /*
+        একই নিউজ দুইবার চালানো হচ্ছে,
+        যাতে ticker-এর জায়গা ফাঁকা না থাকে।
+      */
+
+      breakingText.textContent =
+        fullText +
+        ' • ' +
+        fullText;
+
+      /*
+        Language change হলে animation আবার শুরু হবে।
+      */
+
+      breakingText.style.animation =
+        'none';
+
+      void breakingText.offsetHeight;
+
+      breakingText.style.animation =
+        '';
+
+    }catch(error){
+
+      console.error(
+        'Breaking news load error:',
+        error
+      );
+
+      breakingText.textContent =
+        lang === 'bn'
+          ? 'ব্রেকিং নিউজ লোড হচ্ছে না'
+          : 'Breaking news could not be loaded';
+
+    }
+
+  }
+
+  /* ===================================================
+     BREAKING NEWS REALTIME
+  =================================================== */
+
+  function startBreakingNewsRealtime(){
+
+    if(
+      breakingRealtimeChannel ||
+      !supabaseClient
+    ){
+
+      return;
+
+    }
+
+    try{
+
+      breakingRealtimeChannel =
+        supabaseClient
+
+          .channel(
+            'sk-breaking-news-header'
+          )
+
+          .on(
+            'postgres_changes',
+            {
+              event:'*',
+              schema:'public',
+              table:'breaking_news'
+            },
+            function(){
+
+              console.log(
+                'Breaking news changed — refreshing header'
+              );
+
+              breakingLastSignature =
+                '';
+
+              loadBreakingNews(
+                getLang()
+              );
+
+            }
+          )
+
+          .subscribe(
+            function(status){
+
+              console.log(
+                'Breaking realtime:',
+                status
+              );
+
+            }
+          );
+
+    }catch(error){
+
+      console.error(
+        'Breaking realtime error:',
+        error
+      );
+
+    }
+
+    /*
+      Realtime কাজ না করলেও প্রতি ৩০ সেকেন্ডে
+      Supabase থেকে আবার নিয়ে আসবে।
+    */
+
+    if(
+      !breakingRefreshTimer
+    ){
+
+      breakingRefreshTimer =
+        setInterval(
+          function(){
+
+            breakingLastSignature =
+              '';
+
+            loadBreakingNews(
+              getLang()
+            );
+
+          },
+          30000
+        );
+
+    }
+
+  }
+
+  /* ===================================================
+     LANGUAGE
+  =================================================== */
+
+  async function updateLanguage(lang){
+
+    lang =
+      saveLang(lang);
+
+    const t =
+      T[lang] || T.bn;
+
+    if(langBtn){
+
+      langBtn.textContent =
+        lang === 'bn'
+          ? 'বাং'
+          : 'EN';
+
+    }
+
+    if(searchInput){
+
+      searchInput.placeholder =
+        t.search;
+
+    }
+
+    if(tickerLabel){
+
+      tickerLabel.textContent =
+        t.breaking;
+
+    }
+
+    const cats =
+      document.querySelectorAll(
+        '.menu a'
+      );
+
+    const labels = [
+
+      t.all,
+      t.national,
+      t.politics,
+      t.international,
+      t.sports,
+      t.entertainment,
+      t.tech,
+      t.lifestyle
+
+    ];
+
+    cats.forEach(
+      function(a,index){
+
+        if(labels[index]){
+
+          a.textContent =
+            labels[index];
+
+        }
+
+      }
+    );
+
+    updateParentMenuLanguage(
+      lang
+    );
+
+    /*
+      খুব গুরুত্বপূর্ণ:
+      Language পরিবর্তনের সময় পুরনো signature
+      clear করা হচ্ছে।
+    */
+
+    breakingLastSignature =
+      '';
+
+    /*
+      Header-এর language পরিবর্তনের সঙ্গে সঙ্গে
+      Breaking News-ও translate/update হবে।
+    */
+
+    await loadBreakingNews(
+      lang
+    );
+
+  }
+
+  /* ===================================================
+     THEME BUTTON
+  =================================================== */
+
+  if(themeSwitch){
+
+    themeSwitch.addEventListener(
+      'click',
+      function(e){
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const next =
+          getTheme() === 'dark'
+            ? 'light'
+            : 'dark';
+
+        localStorage.setItem(
+          THEME_KEY,
+          next
+        );
+
+        localStorage.setItem(
+          SITE_THEME_KEY,
+          next
+        );
+
+        applyTheme(
+          next
+        );
+
+        try{
+
+          window.top.postMessage(
+            {
+              type:'skThemeChanged',
+              theme:next
+            },
+            '*'
+          );
+
+        }catch(e){}
+
+      }
+    );
+
+  }
+
+  /* ===================================================
+     LANGUAGE BUTTON
+  =================================================== */
+
+  if(langBtn){
+
+    langBtn.addEventListener(
+      'click',
+      async function(e){
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const next =
+          getLang() === 'bn'
+            ? 'en'
+            : 'bn';
+
+        /*
+          await করা হয়েছে যাতে language change-এর
+          সঙ্গে Breaking News translation-ও শুরু হয়।
+        */
+
+        await updateLanguage(
+          next
+        );
+
+        try{
+
+          window.top.postMessage(
+            {
+              type:'skLangChanged',
+              lang:next
+            },
+            '*'
+          );
+
+          window.top.postMessage(
+            {
+              type:'language',
+              lang:next
+            },
+            '*'
+          );
+
+        }catch(e){}
+
+      }
+    );
+
+  }
+
+  /* ===================================================
+     CATEGORY
+  =================================================== */
+
+  document
+    .querySelectorAll(
+      '.menu a'
+    )
+    .forEach(
+      function(link){
+
+        link.addEventListener(
+          'click',
+          function(e){
+
+            e.preventDefault();
+
+            document
+              .querySelectorAll(
+                '.menu a'
+              )
+              .forEach(
+                function(a){
+
+                  a.classList.remove(
+                    'active'
+                  );
+
+                }
+              );
+
+            this.classList.add(
+              'active'
+            );
+
+            try{
+
+              window.top.postMessage(
+                {
+                  type:'category',
+                  cat:this.dataset.cat
+                },
+                '*'
+              );
+
+            }catch(error){}
+
+          }
+        );
+
+      }
+    );
+
+  /* ===================================================
+     SEARCH
+  =================================================== */
+
+  if(searchInput){
+
+    searchInput.addEventListener(
+      'input',
+      function(){
+
+        try{
+
+          window.top.postMessage(
+            {
+              type:'search',
+              keyword:this.value
+            },
+            '*'
+          );
+
+        }catch(error){}
+
+      }
+    );
+
+  }
+
+  /* ===================================================
+     INITIALIZE
+  =================================================== */
+
+  applyTheme(
+    getTheme()
+  );
+
+  updateLanguage(
+    getLang()
+  );
+
+  loadSupabase()
+    .then(
+      function(){
+
+        /*
+          প্রথমবার Breaking News load
+        */
+
+        loadBreakingNews(
+          getLang()
+        );
+
+        /*
+          Realtime চালু
+        */
+
+        startBreakingNewsRealtime();
+
+      }
+    )
+    .catch(
+      function(error){
+
+        console.error(
+          'Supabase startup error:',
+          error
+        );
+
+      }
+    );
+
+  /* ===================================================
+     SYNC FROM PARENT
+  =================================================== */
+
+  window.addEventListener(
+    'message',
+    function(e){
+
+      const d =
+        e.data || {};
+
+      if(
+        (
+          d.type === 'skLangChanged' ||
+          d.type === 'language'
+        ) &&
+        (
+          d.lang === 'bn' ||
+          d.lang === 'en'
+        )
+      ){
+
+        updateLanguage(
+          d.lang
+        );
+
+      }
+
+      if(
+        d.type === 'skThemeChanged' &&
+        (
+          d.theme === 'dark' ||
+          d.theme === 'light'
+        )
+      ){
+
+        localStorage.setItem(
+          THEME_KEY,
+          d.theme
+        );
+
+        localStorage.setItem(
+          SITE_THEME_KEY,
+          d.theme
+        );
+
+        applyTheme(
+          d.theme
+        );
+
+      }
+
+    }
+  );
+
+})();
+
+/* =====================================================
+   CREATE MENU ON LOAD
+===================================================== */
+
+createParentMenu();
+
+setupMenuLinks();
+
+</script>
+
+</body>
+</html>
