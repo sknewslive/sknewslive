@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<script src="theme.js"></script>
+<title>SK News Live - Article</title>
+<meta id="ogTitle" property="og:title" content="SK News Live">
+<meta id="ogDescription" property="og:description" content="SK News Live Article">
+<meta id="ogImage" property="og:image" content="">
+<meta id="ogUrl" property="og:url" content="">
+<meta property="og:type" content="article">
+<style>
+:root{
+  --bg:#f5f7fa; --card:#fff; --text:#222; --text2:#333; --text3:#777; --border:#eee; --btn:#f1f1f1;
+}
+[data-theme="dark"],.dark-theme,.dark{
+  --bg:#121212; --card:#1e1e1e; --text:#e0e0e0; --text2:#ccc; --text3:#999; --border:#2a2a2a; --btn:#2a2a2a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{padding-top:162px;padding-bottom:200px;background:var(--bg);font-family:Arial,"Noto Sans Bengali",sans-serif;color:var(--text);transition:background.3s,color.3s}
+.header-frame{position:fixed;top:0;left:0;width:100%;height:162px;border:0;z-index:9999}
+.footer-frame{position:fixed;left:0;bottom:0;width:100%;height:200px;border:0;z-index:9998}
+.article-container{max-width:1050px;margin:auto;padding:8px 10px 12px}
+.article-box,.comments-box{background:var(--card);border-radius:12px;overflow:hidden;box-shadow:0 3px 14px rgba(0,0,0,.09);border:1px solid var(--border)}
+.article-top{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:1px solid var(--border)}
+.article-info{display:flex;align-items:center;gap:9px}
+.category{background:#e6002d;color:#fff;padding:5px 10px;border-radius:4px;font-size:14px;font-weight:bold}
+.view-count{font-size:15px;color:var(--text3);font-weight:600}
+.close-btn{width:33px;height:33px;border:0;border-radius:50%;background:var(--btn);color:var(--text);font-size:23px;cursor:pointer}
+.article-image{display:block;width:100%;height:320px;object-fit:cover}
+.article-content{padding:16px 22px 7px}
+.article-title{font-size:34px;line-height:1.45;color:var(--text);margin-bottom:7px}
+.article-date{font-size:13px;color:var(--text3);margin-bottom:13px}
+.article-text{font-size:21px;line-height:1.95;color:var(--text2);word-break:break-word}
+.article-actions{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--border);margin-top:15px}
+.action-btn{width:100%;border:0;background:var(--card);padding:13px 4px;font-family:inherit;font-size:16px;color:var(--text);cursor:pointer}
+.like-btn.liked{color:#e6002d;font-weight:bold}
+.share-wrap{position:relative}
+.share-menu{display:none;position:absolute;right:5px;bottom:48px;width:185px;background:var(--card);border:1px solid var(--border);border-radius:9px;box-shadow:0 5px 20px rgba(0,0,0,.18);overflow:hidden;z-index:100}
+.share-menu.show{display:block}
+.share-menu button{width:100%;border:0;background:var(--card);color:var(--text);padding:11px 13px;text-align:left;font-size:14px;cursor:pointer}
+.comments-box{display:none;position:fixed;inset:0;z-index:11000;background:rgba(0,0,0,.48);align-items:center;justify-content:center}
+.comments-box.expanded{display:flex}
+.comments-title{padding:13px 16px;border-bottom:1px solid var(--border);background:var(--card);color:var(--text);display:flex;align-items:center;justify-content:space-between;font-size:18px;font-weight:700}
+.comments-modal-panel{width:min(700px,calc(100vw - 28px));height:min(58vh,620px);background:var(--card);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.comments-content{flex:1;overflow-y:auto;padding:14px 18px 18px;background:var(--card)}
+.comment-popup-close{width:32px;height:32px;border:0;border-radius:50%;background:var(--btn);color:var(--text);font-size:23px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.login-message{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;margin-bottom:18px}
+.login-btn{display:inline-block;background:#e6002d;color:#fff;text-decoration:none;padding:8px 20px;border-radius:6px}
+.comment-form{display:none;margin-bottom:18px}
+.comment-form textarea{width:100%;min-height:90px;border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:8px;padding:11px;font-size:16px}
+.comment-submit{margin-top:8px;background:#e6002d;color:#fff;border:0;border-radius:6px;padding:9px 18px;cursor:pointer}
+.comment-item{padding:14px 0;border-bottom:1px solid var(--border)}
+.comment-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;flex:0 0 34px;background:#eef1f5;border:1px solid var(--border)}
+.comment-avatar-fallback{display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;color:var(--text)}
+.comment-user{font-weight:700;font-size:16px;color:var(--text)}
+.comment-time{color:var(--text3);font-size:12px;margin:4px 0 7px 42px}
+.comment-text{color:var(--text2);font-size:16px;line-height:1.7;margin-left:42px}
+.comment-controls{display:flex;gap:5px;margin-left:42px;margin-top:5px}
+.comment-controls button{border:0;border-radius:6px;padding:6px 9px;font-size:11px;cursor:pointer}
+.comment-edit-btn{background:#eef4ff;color:#1557b0}
+.comment-delete-btn{background:#fff0f1;color:#c4002b}
+[data-theme="dark"].comment-edit-btn{background:#1a2744;color:#8fb0ff}
+[data-theme="dark"].comment-delete-btn{background:#3a1e21;color:#ff8a9a}
+#viewCount{font-weight:800;color:#1477d4;margin-left:4px;font-size:1.18em}
+@media(max-width:768px){
+  body{padding-top:162px;padding-bottom:0}
+ .article-container{padding:6px 6px 12px}
+ .article-image{height:230px}
+ .article-title{font-size:26px}
+ .article-text{font-size:19px}
+ .footer-frame{position:relative;left:auto;bottom:auto;width:100%;height:200px;margin-top:10px;z-index:10}
+}
+</style>
+</head>
+<body>
+<iframe src="header.html" class="header-frame" id="headerFrame"></iframe>
+<main class="article-container"><article class="article-box" id="articleBox"><div class="loading">আর্টিকেল লোড হচ্ছে...</div></article></main>
+<section class="comments-box" id="commentsSection" onclick="if(event.target===this)closeComments()"><div class="comments-modal-panel" onclick="event.stopPropagation()"><div class="comments-title"><span id="cTitle">💬 মন্তব্য (<span id="commentCount">0</span>)</span><button class="comment-popup-close" onclick="closeComments()">×</button></div><div class="comments-content" id="commentsContent"><div class="login-message" id="loginMessage"><p id="loginTxt">মন্তব্য করতে Login করুন।</p><a href="login.html" class="login-btn">Login</a></div><div class="comment-form" id="commentForm"><textarea id="commentText"></textarea><button class="comment-submit" id="submitBtn" onclick="submitComment()">মন্তব্য করুন</button></div><div id="commentsList"><div class="loading">মন্তব্য লোড হচ্ছে...</div></div></div></div></section>
+<iframe src="footer.html" class="footer-frame" id="footerFrame"></iframe>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  function applyTheme(){
+    const t = localStorage.getItem('theme')||localStorage.getItem('sk_theme')||localStorage.getItem('sk-theme')||'light';
+    const isDark = t==='dark' || document.documentElement.getAttribute('data-theme')==='dark' || document.documentElement.classList.contains('dark-theme') || document.body.classList.contains('dark-theme');
+    if(isDark){ document.documentElement.setAttribute('data-theme','dark'); document.body.classList.add('dark-theme'); }
+    else { document.documentElement.setAttribute('data-theme','light'); document.body.classList.remove('dark-theme'); }
+  }
+  applyTheme(); setInterval(applyTheme,500);
+  window.addEventListener('storage',applyTheme);
+  window.addEventListener('message',function(e){ const d=e.data||{}; if(d.type==='theme' || d.type==='skThemeChanged' || d.type==='themeChanged'){ if(d.theme) localStorage.setItem('theme',d.theme); applyTheme(); } });
+})();
+const SUPABASE_URL='https://nsjeprihgudhiczefopu.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5zamVwcmloZ3VkaGljemVmb3B1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMTYxOTAsImV4cCI6MjA5ODY5MjE5MH0.mOpduK47q0bjV-dQpkUPiq8xkhspF6eFqLzrGiaArd4';
+const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const articleId=new URLSearchParams(location.search).get('id');
+let currentArticle=null; let currentSessionUser=null; let isAdmin=false;
+let orgTitle='', orgBody='', orgCat='';
+const LANG_CODES=["bn","en","ar","hi","ur","es","fr","tr","de","id"];
+const TL={
+ bn:{pub:'প্রকাশিত: ',like:'❤️ লাইক',comment:'💬 মন্তব্য',share:'↗ শেয়ার',cTitle:'💬 মন্তব্য',login:'মন্তব্য করতে Login করুন।',ph:'আপনার মন্তব্য লিখুন...',btn:'মন্তব্য করুন',noC:'এখনো কোনো মন্তব্য নেই।',trans:'অনুবাদ হচ্ছে...'},
+ en:{pub:'Published: ',like:'❤️ Like',comment:'💬 Comment',share:'↗ Share',cTitle:'💬 Comments',login:'Login to comment.',ph:'Write your comment...',btn:'Comment',noC:'No comments yet.',trans:'Translating...'},
+ ar:{pub:'نشر: ',like:'❤️ إعجاب',comment:'💬 تعليق',share:'↗ مشاركة',cTitle:'💬 تعليقات',login:'سجل دخول.',ph:'اكتب...',btn:'تعليق',noC:'لا تعليقات.',trans:'جاري الترجمة...'},
+ hi:{pub:'प्रकाशित: ',like:'❤️ लाइक',comment:'💬 टिप्पणी',share:'↗ शेयर',cTitle:'💬 टिप्पणियाँ',login:'लॉगिन करें।',ph:'लिखें...',btn:'टिप्पणी',noC:'कोई टिप्पणी नहीं।',trans:'अनुवाद हो रहा है...'},
+ ur:{pub:'شائع: ',like:'❤️ لائک',comment:'💬 تبصرہ',share:'↗ شیئر',cTitle:'💬 تبصرے',login:'لاگ ان کریں۔',ph:'لکھیں...',btn:'تبصرہ',noC:'کوئی تبصرہ نہیں۔',trans:'ترجمہ ہو رہا ہے...'},
+ es:{pub:'Publicado: ',like:'❤️ Me gusta',comment:'💬 Comentario',share:'↗ Compartir',cTitle:'💬 Comentarios',login:'Inicia sesión.',ph:'Escribe...',btn:'Comentar',noC:'Sin comentarios.',trans:'Traduciendo...'},
+ fr:{pub:'Publié: ',like:'❤️ J’aime',comment:'💬 Commentaire',share:'↗ Partager',cTitle:'💬 Commentaires',login:'Connectez-vous.',ph:'Écrivez...',btn:'Commenter',noC:'Aucun commentaire.',trans:'Traduction...'},
+ tr:{pub:'Yayın: ',like:'❤️ Beğen',comment:'💬 Yorum',share:'↗ Paylaş',cTitle:'💬 Yorumlar',login:'Giriş yap.',ph:'Yazın...',btn:'Yorum',noC:'Yorum yok.',trans:'Çevriliyor...'},
+ de:{pub:'Veröffentlicht: ',like:'❤️ Like',comment:'💬 Kommentar',share:'↗ Teilen',cTitle:'💬 Kommentare',login:'Anmelden.',ph:'Schreiben...',btn:'Kommentieren',noC:'Keine Kommentare.',trans:'Übersetzen...'},
+ id:{pub:'Diterbitkan: ',like:'❤️ Suka',comment:'💬 Komentar',share:'↗ Bagikan',cTitle:'💬 Komentar',login:'Login untuk komentar.',ph:'Tulis...',btn:'Komentar',noC:'Belum ada.',trans:'Menerjemahkan...'}
+};
+const catMapBnToEn={'সব':'All','জাতীয়':'National','রাজনীতি':'Politics','আন্তর্জাতিক':'International','খেলা':'Sports','বিনোদন':'Entertainment','টেক':'Tech','লাইফস্টাইল':'Lifestyle','সাধারণ':'General'};
+function getLang(){ const l=localStorage.getItem('sk_lang')||localStorage.getItem('lang')||'bn'; return LANG_CODES.includes(l)?l:'bn';}
+function curT(){return TL[getLang()]||TL.bn;}
+function formatNum(n){ const lang=getLang(); const map={bn:'bn-BD',en:'en-US',ar:'ar-EG',hi:'hi-IN',ur:'ur-PK',es:'es-ES',fr:'fr-FR',tr:'tr-TR',de:'de-DE',id:'id-ID'}; return Number(n||0).toLocaleString(map[lang]||'en-US');}
+function esc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');}
+function content(v){return esc(v).replace(/\r?\n/g,'<br>');}
+function date(v){ const lang=getLang(); const map={bn:'bn-BD',en:'en-US',ar:'ar-EG',hi:'hi-IN',ur:'ur-PK',es:'es-ES',fr:'fr-FR',tr:'tr-TR',de:'de-DE',id:'id-ID'}; return v?new Date(v).toLocaleString(map[lang]||'en-US',{year:'numeric',month:'long',day:'numeric',hour:'numeric',minute:'2-digit'}):'';}
+function initials(n){return esc(String(n||'ব্য').trim().slice(0,1));}
+const trCache=new Map();
+async function doTranslate(text, target){
+  if(!text || target==='bn') return text;
+  const key=text.slice(0,80)+'|'+text.length+'|'+target;
+  if(trCache.has(key)) return trCache.get(key);
+  try{ const c=localStorage.getItem('sktr_'+key); if(c){trCache.set(key,c); return c;} }catch(e){}
+  if(window.SK_Translate){ const r=await window.SK_Translate(text,target); trCache.set(key,r); try{localStorage.setItem('sktr_'+key,r);}catch(e){} return r; }
+  try{ let out=''; for(let i=0;i<text.length;i+=500){ let part=text.slice(i,i+500); let url=`https://translate.googleapis.com/translate_a/single?client=gtx&sl=bn&tl=${target}&dt=t&q=${encodeURIComponent(part)}`; let r=await fetch(url); let d=await r.json(); if(d && d[0]) d[0].forEach(a=>{ if(a[0]) out+=a[0]; }); } trCache.set(key,out||text); try{localStorage.setItem('sktr_'+key,out||text);}catch(e){} return out||text; }catch(e){ return text; }
+}
+async function loadArticle(){
+ if(!articleId){showError('আর্টিকেল পাওয়া যায়নি','ID নেই');return;}
+ try{ const {data,error}=await supabaseClient.from('articles').select('id,title,category,content,image_url,created_at').eq('id',articleId).maybeSingle(); if(error)throw error; if(!data){showError('পাওয়া যায়নি','');return;} currentArticle=data; orgTitle=data.title; orgBody=data.content; orgCat=data.category; await renderArticle(data); setMeta(data); await recordArticleView(); await loadLikeStatus(); await loadShareCount(); await checkLogin(); await loadComments(); }catch(e){showError('Error',e.message);}
+}
+async function renderArticle(a){
+  const img=a.image_url||'https://picsum.photos/1000/500'; const t=curT(); const lang=getLang(); let displayTitle=orgTitle||a.title; let displayBody=orgBody||a.content; let displayCat=orgCat||a.category||'General';
+  if(lang!=='bn'){ document.getElementById('articleBox').innerHTML=`<div style="padding:40px;text-align:center;color:#777">${t.trans}</div>`; try{ const enCat=catMapBnToEn[orgCat]||orgCat||'General'; let combined=displayTitle+'\n[[[SEP]]]\n'+displayBody+'\n[[[SEP]]]\n'+enCat; let translated=await doTranslate(combined,lang); let parts=translated.split('[[[SEP]]]'); if(parts.length>=3){ displayTitle=parts[0].trim(); displayBody=parts[1].trim(); displayCat=parts[2].trim(); } }catch(e){} } else { displayCat=a.category||'সাধারণ'; }
+  document.getElementById('articleBox').innerHTML=`<div class="article-top"><div class="article-info"><span class="category">${esc(displayCat)}</span><span class="view-count">👁 <span id="viewCount">0</span></span></div><button class="close-btn" onclick="history.back()">×</button></div><img class="article-image" src="${esc(img)}" onerror="this.src='https://picsum.photos/1000/500'"><div class="article-content"><h1 class="article-title">${esc(displayTitle)}</h1><div class="article-date">${t.pub}${date(a.created_at)}</div><div class="article-text">${content(displayBody||'')}</div><div class="article-actions"><button class="action-btn like-btn" id="likeButton" onclick="toggleArticleLike()">${t.like} <span id="likeCount">0</span></button><button class="action-btn" onclick="openComments()">${t.comment} <span id="actionCommentCount">0</span></button><div class="share-wrap"><button class="action-btn" onclick="toggleShare(event)">${t.share} <span id="shareCount">0</span></button><div class="share-menu" id="shareMenu"><button onclick="shareFacebook()">📘 Facebook</button><button onclick="shareWhatsApp()">🟢 WhatsApp</button><button onclick="shareYouTube()">▶ YouTube</button><button onclick="shareInstagram()">📷 Instagram</button><button onclick="shareTikTok()">♪ TikTok</button><button onclick="copyArticleLink()">🔗 Copy</button></div></div></div></div>`;
+}
+function setMeta(a){document.title=a.title+' - SK News Live';}
+async function recordArticleView(){const el=document.getElementById('viewCount');if(!el)return;try{const n=Number(articleId);const {data}=await supabaseClient.rpc('record_article_view_v2',{p_article_id:n});if(el) el.textContent=formatNum(data||0);}catch(e){}}
+function getVisitorLikeId(){const k='sk_news_like_visitor_id';let id=localStorage.getItem(k);if(!id){id=(crypto&&crypto.randomUUID)?crypto.randomUUID():'v-'+Date.now();localStorage.setItem(k,id);}return id;}
+async function loadLikeStatus(){try{const n=Number(articleId);const {data}=await supabaseClient.rpc('get_article_guest_like_status',{p_article_id:n,p_visitor_id:getVisitorLikeId()});const lc=document.getElementById('likeCount'); if(lc) lc.textContent=formatNum(data?.like_count||0);document.getElementById('likeButton')?.classList.toggle('liked',data?.liked===true);}catch(e){}}
+async function toggleArticleLike(){try{const n=Number(articleId);await supabaseClient.rpc('toggle_article_guest_like',{p_article_id:n,p_visitor_id:getVisitorLikeId()});await loadLikeStatus();}catch(e){}}
+async function loadShareCount(){try{const n=Number(articleId);const {data}=await supabaseClient.rpc('get_article_share_count',{p_article_id:n});const sc=document.getElementById('shareCount'); if(sc) sc.textContent=formatNum(data||0);}catch(e){}}
+async function recordArticleShare(t){try{const n=Number(articleId);await supabaseClient.rpc('record_article_share',{p_article_id:n,p_share_type:t}); const el=document.getElementById('shareCount'); if(el){ const cur=Number(el.textContent.replace(/[^\d]/g,''))||0; el.textContent=formatNum(cur+1); } }catch(e){}}
+async function getCurrentUser(){try{const {data}=await supabaseClient.auth.getSession();return data?.session?.user||null;}catch(e){return null;}}
+async function checkAdminRole(u){isAdmin=false;if(!u)return false;try{const {data}=await supabaseClient.from('profiles').select('role').eq('id',u.id).maybeSingle();isAdmin=data?.role==='admin';return isAdmin;}catch(e){return false;}}
+async function checkLogin(){ currentSessionUser=await getCurrentUser(); await checkAdminRole(currentSessionUser); const lm=document.getElementById('loginMessage'); const cf=document.getElementById('commentForm'); const txt=curT(); const lt=document.getElementById('loginTxt'); if(lt) lt.textContent=txt.login; const ca=document.getElementById('commentText'); if(ca) ca.placeholder=txt.ph; const sb=document.getElementById('submitBtn'); if(sb) sb.textContent=txt.btn; const ct=document.getElementById('cTitle'); if(ct) ct.innerHTML=`${txt.cTitle} (<span id="commentCount">0</span>)`; if(currentSessionUser){ if(lm) lm.style.display='none'; if(cf) cf.style.display='block'; }else{ if(lm) lm.style.display='block'; if(cf) cf.style.display='none'; } }
+async function loadProfilesForComments(cs){const ids=[...new Set(cs.map(c=>c.user_id).filter(Boolean).map(String))];if(!ids.length)return {};try{const {data}=await supabaseClient.from('profiles').select('id,name,avatar_url').in('id',ids);return Object.fromEntries((data||[]).map(p=>[String(p.id),p]));}catch(e){return {};}}
+async function loadComments(){ const list=document.getElementById('commentsList'); const t=curT(); try{ currentSessionUser=await getCurrentUser(); await checkAdminRole(currentSessionUser); const {data}=await supabaseClient.from('comments').select('*').eq('article_id',articleId).order('created_at',{ascending:false}); const comments=data||[]; const profiles=await loadProfilesForComments(comments); const cc=document.getElementById('commentCount'); if(cc) cc.textContent=formatNum(comments.length); const ac=document.getElementById('actionCommentCount'); if(ac) ac.textContent=formatNum(comments.length); if(!comments.length){list.innerHTML=`<div class="no-comment">${t.noC}</div>`;return;} list.innerHTML=comments.map(c=>{ const pr=profiles[String(c.user_id)]||{}; const name=pr.name||c.user_name||'User'; const avatar=pr.avatar_url||''; const av=avatar?`<img class="comment-avatar" src="${esc(avatar)}" onerror="this.style.display='none'">`:`<span class="comment-avatar comment-avatar-fallback">${initials(name)}</span>`; const owner=!!currentSessionUser && String(currentSessionUser.id)===String(c.user_id); const canManage=owner||isAdmin; return `<div class="comment-item"><div style="display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;gap:8px">${av}<div class="comment-user">${esc(name)}</div></div>${canManage?`<div class="comment-controls"><button class="comment-edit-btn" onclick="editComment('${c.id}')">✏️ Edit</button><button class="comment-delete-btn" onclick="deleteComment('${c.id}')">🗑️ Delete</button></div>`:''}</div><div class="comment-time">${date(c.created_at)}</div><div class="comment-text">${esc(c.comment||'')}</div></div>`; }).join(''); }catch(e){list.innerHTML='<div class="no-comment">Error</div>';} }
+async function submitComment(){const ta=document.getElementById('commentText');const text=ta.value.trim();if(!text)return;const u=await getCurrentUser();if(!u){location.href='login.html';return;}await supabaseClient.from('comments').insert({article_id:articleId,user_id:u.id,user_name:u.email?.split('@')[0],comment:text});ta.value='';loadComments();}
+function openComments(){document.getElementById('commentsSection').classList.add('expanded');}
+function closeComments(){document.getElementById('commentsSection').classList.remove('expanded');}
+function toggleShare(e){e.stopPropagation();document.getElementById('shareMenu').classList.toggle('show');}
+document.addEventListener('click',()=>{const m=document.getElementById('shareMenu');if(m)m.classList.remove('show');});
+function shareFacebook(){window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),'_blank');recordArticleShare('facebook');}
+function shareWhatsApp(){window.open('https://wa.me/?text='+encodeURIComponent(location.href),'_blank');recordArticleShare('whatsapp');}
+function shareYouTube(){window.open('https://www.youtube.com/','_blank');recordArticleShare('youtube');}
+function shareInstagram(){window.open('https://www.instagram.com/','_blank');recordArticleShare('instagram');}
+function shareTikTok(){window.open('https://www.tiktok.com/','_blank');recordArticleShare('tiktok');}
+function copyArticleLink(){navigator.clipboard.writeText(location.href);alert('Copied');recordArticleShare('copy');}
+async function editComment(id){ const {data}=await supabaseClient.from('comments').select('*').eq('id',id).maybeSingle(); if(!data) return; const newText=prompt('Edit comment:', data.comment); if(newText!==null){ await supabaseClient.from('comments').update({comment:newText}).eq('id',id); loadComments(); } }
+async function deleteComment(id){ if(!confirm('Delete?')) return; await supabaseClient.from('comments').delete().eq('id',id); loadComments(); }
+function showError(t,m){document.getElementById('articleBox').innerHTML=`<div style="padding:20px;text-align:center"><h2>${esc(t)}</h2><p>${esc(m)}</p></div>`;}
+window.addEventListener('message',async function(e){ const d=e.data||{}; if((d.type==='skLangChanged'||d.type==='language'||d.type==='LANG_CHANGE')&&d.lang&&LANG_CODES.includes(d.lang)){ localStorage.setItem('sk_lang',d.lang); localStorage.setItem('lang',d.lang); if(currentArticle) await renderArticle(currentArticle); await checkLogin(); await loadComments(); } });
+window.addEventListener('storage',async function(e){ if(e.key==='sk_lang'||e.key==='lang' || e.key==='theme' || e.key==='sk_theme'){ if(currentArticle) await renderArticle(currentArticle); await checkLogin(); await loadComments(); }});
+try{ const ch=new BroadcastChannel('sk_news_live_sync'); ch.addEventListener('message',async function(e){ const d=e.data||{}; if(d.type==='language'&&d.lang&&LANG_CODES.includes(d.lang)){ localStorage.setItem('sk_lang',d.lang); if(currentArticle) await renderArticle(currentArticle); await checkLogin(); await loadComments(); } }); }catch(e){}
+document.getElementById('headerFrame').addEventListener('load',function(){ try{this.contentWindow.postMessage({type:'REQUEST_LANGUAGE'},'*');}catch(e){} });
+loadArticle();
+</script>
+</body>
+</html>
